@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Smart Messenger – Website Wireframes</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#e6e6e6;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111}
+  .wrap{max-width:1200px;margin:0 auto;padding:32px 24px 60px}
+  h1{font-size:26px;margin:0 0 4px}
+  .lead{color:#555;font-size:14px;margin:0 0 24px}
+  .screen{margin:44px 0 0}
+  .label{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+  .num{background:#111;color:#fff;font-size:12px;font-weight:700;border-radius:4px;padding:3px 8px}
+  .label h2{font-size:17px;margin:0}
+  .label p{margin:0;font-size:13px;color:#555}
+
+  /* Frame (browser window) */
+  .browser{border:1px solid #b5b5b5;border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 3px 14px rgba(0,0,0,.08)}
+  .bar{height:30px;background:#dadada;display:flex;align-items:center;gap:6px;padding:0 12px}
+  .dot{width:10px;height:10px;border-radius:50%;background:#9a9a9a}
+  .url{margin-left:14px;background:#f4f4f4;border-radius:5px;font-size:11px;color:#666;padding:3px 12px;width:320px}
+  .frame{display:flex;height:620px;position:relative}
+
+  /* Left icon rail */
+  .rail{width:72px;background:#efefef;border-right:1px solid #d6d6d6;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px}
+  .rail .i{width:56px;padding:7px 0;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#555}
+  .rail .i .g{font-size:17px;line-height:1}
+  .rail .i.on{background:#111;color:#fff}
+  .rail .sp{flex:1}
+  .rail .me{width:34px;height:34px;border-radius:50%;background:#bdbdbd}
+
+  /* Side list panel */
+  .list{width:350px;border-right:1px solid #d6d6d6;display:flex;flex-direction:column;background:#fff;flex:none}
+  .list-h{padding:16px 16px 12px;display:flex;justify-content:space-between;align-items:center}
+  .list-h b{font-size:20px}
+  .icons{display:flex;gap:10px;color:#555;font-size:15px}
+  .search{margin:0 16px 10px;background:#f1f1f1;border-radius:8px;padding:9px 12px;font-size:13px;color:#8a8a8a}
+  .chips{display:flex;gap:8px;padding:0 16px 10px;flex-wrap:wrap}
+  .chip{border:1px solid #c9c9c9;border-radius:999px;padding:4px 12px;font-size:12px;color:#444;background:#fff}
+  .chip.on{background:#111;color:#fff;border-color:#111}
+  .group-t{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#777;padding:10px 16px 4px}
+  .row{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid #f0f0f0;align-items:center}
+  .row.sel{background:#ececec}
+  .row.dim{opacity:.55}
+  .av{width:42px;height:42px;border-radius:50%;background:#cfcfcf;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#333}
+  .av.sm{width:32px;height:32px;font-size:11px}
+  .av.lg{width:72px;height:72px;font-size:22px}
+  .meta{flex:1;min-width:0}
+  .top{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;gap:8px}
+  .time{font-size:11px;color:#777;font-weight:400;white-space:nowrap}
+  .time.u{color:#111;font-weight:700}
+  .sub{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#666;margin-top:3px;gap:8px}
+  .sub .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .why{font-size:11px;color:#777;margin-top:3px}
+  .badge{background:#111;color:#fff;border-radius:999px;font-size:11px;min-width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;flex:none}
+  .tag{font-size:10px;border:1px solid #999;border-radius:4px;padding:1px 6px;color:#333;font-weight:600;white-space:nowrap}
+  .tag.solid{background:#111;color:#fff;border-color:#111}
+
+  /* Main pane */
+  .main{flex:1;display:flex;flex-direction:column;background:#f6f6f6;min-width:0}
+  .ch{height:60px;background:#efefef;border-bottom:1px solid #d6d6d6;display:flex;align-items:center;gap:12px;padding:0 18px;flex:none}
+  .ch .n{font-weight:600;font-size:15px}
+  .ch .s{font-size:12px;color:#777}
+  .ch .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .msgs{flex:1;padding:16px 48px;display:flex;flex-direction:column;gap:8px;overflow:hidden;
+        background-image:radial-gradient(#e2e2e2 1px,transparent 1px);background-size:16px 16px}
+  .day{align-self:center;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;color:#666;padding:3px 10px}
+  .b{max-width:62%;padding:7px 11px;border-radius:8px;font-size:13.5px;line-height:1.4;background:#fff;border:1px solid #e0e0e0;align-self:flex-start}
+  .b.out{align-self:flex-end;background:#dedede;border-color:#d0d0d0}
+  .b small{display:block;text-align:right;font-size:10px;color:#777;margin-top:2px}
+  .composer{height:60px;background:#efefef;display:flex;align-items:center;gap:12px;padding:0 18px;border-top:1px solid #d6d6d6;flex:none;color:#555}
+  .input{flex:1;background:#fff;border-radius:8px;padding:10px 14px;font-size:13px;color:#8a8a8a;border:1px solid #e0e0e0}
+
+  /* AI copilot – dashed = AI-generated */
+  .copilot{margin:0 18px 10px;border:1.5px dashed #444;border-radius:10px;background:#fff;padding:12px 14px;flex:none}
+  .ai{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .ai::before{content:"✦";font-size:12px}
+  .draft{margin:8px 0 10px;padding:10px 12px;background:#f3f3f3;border-radius:8px;font-size:13.5px;line-height:1.45}
+  .acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-block;border:1px solid #111;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;background:#fff;color:#111;white-space:nowrap}
+  .btn.pri{background:#111;color:#fff}
+  .btn.ghost{border-color:#c7c7c7;color:#555}
+  .btn.lg{padding:10px 22px;font-size:14px}
+  .tone{display:flex;gap:6px;margin-left:auto}
+  .hint{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #eee;font-size:12.5px}
+
+  /* Drawer */
+  .drawer{width:340px;border-left:1px solid #d6d6d6;background:#fff;display:flex;flex-direction:column;flex:none;overflow:hidden}
+  .dh{height:60px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid #e5e5e5;background:#efefef;font-weight:600;flex:none}
+  .dh .x{margin-left:auto;color:#777;font-weight:400}
+  .sec{padding:13px 18px;border-bottom:1px solid #eee}
+  .sec h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666}
+  .sec ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6}
+  .note{font-size:12px;color:#777;line-height:1.5}
+  .src{font-size:11px;color:#777}
+
+  /* Generic content */
+  .pad{padding:22px 28px;overflow:hidden}
+  .card{background:#fff;border:1px solid #dcdcdc;border-radius:10px;padding:14px 16px}
+  .card.ai-card{border:1.5px dashed #444}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#666;margin-bottom:6px}
+  .field .v{background:#fff;border:1px solid #cfcfcf;border-radius:7px;padding:9px 12px;font-size:13.5px}
+  .chk{width:18px;height:18px;border:1.5px solid #555;border-radius:4px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+  .chk.on{background:#111;border-color:#111;color:#fff}
+  .tog{width:36px;height:20px;border-radius:999px;background:#cfcfcf;position:relative;flex:none}
+  .tog::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+  .tog.on{background:#111}.tog.on::after{left:18px}
+  .set{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eee}
+  .set .tx{flex:1}.set .tx b{font-size:13.5px;font-weight:600;display:block}.set .tx span{font-size:12px;color:#777}
+  .bar-s{height:6px;background:#e3e3e3;border-radius:999px;overflow:hidden;flex:1}
+  .bar-s i{display:block;height:100%;background:#111}
+  .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;text-align:center;gap:6px}
+
+  /* Modal */
+  .overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+  .modal{width:460px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  .modal .mh{padding:16px 20px;border-bottom:1px solid #eee;font-weight:700;font-size:16px}
+  .modal .mb{padding:18px 20px}
+  .modal .mf{padding:14px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;background:#fafafa}
+
+  /* Overview */
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;background:#fff;border:1px solid #ccc;border-radius:10px;padding:14px 16px}
+  .flow .st{border:1px solid #111;border-radius:6px;padding:5px 10px;font-weight:600}
+  .flow .ar{color:#888}
+  .legend{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+  .legend .card{font-size:12.5px;line-height:1.5}
+  .sw{display:flex;gap:6px;margin-top:6px}
+  .sw i{width:26px;height:26px;border-radius:6px;border:1px solid #bbb;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Smart Messenger — Website Wireframes</h1>
+<p class="lead">Desktop web app, WhatsApp Web–style layout: icon rail → list panel → main pane (+ optional right drawer). Grayscale only.</p>
+
+<div class="flow">
+  <span class="st">Onboarding</span><span class="ar">→</span>
+  <span class="st">Chats (Smart Inbox)</span><span class="ar">→</span>
+  <span class="st">Chat + AI Copilot</span><span class="ar">→</span>
+  <span class="st">Review &amp; Send</span><span class="ar">→</span>
+  <span class="st">Add Reminder</span><span class="ar">→</span>
+  <span class="st">Reminders</span><span class="ar">·</span>
+  <span class="st">Memory</span><span class="ar">·</span>
+  <span class="st">Assistant</span><span class="ar">·</span>
+  <span class="st">Settings</span>
+</div>
+
+<div class="legend">
+  <div class="card"><b>Navigation</b><br>5 rail items, always visible: Chats, Assistant, Reminders, Memory, Settings. Every screen is one click away.</div>
+  <div class="card"><b>Original vs AI</b><br>Solid borders = real messages and user data. <b>Dashed border + ✦</b> = AI-generated suggestion.</div>
+  <div class="card"><b>Actions</b><br>Black filled = primary action. Outlined = secondary. Gray = cancel/dismiss.</div>
+  <div class="card"><b>Palette</b><div class="sw"><i style="background:#111"></i><i style="background:#555"></i><i style="background:#cfcfcf"></i><i style="background:#efefef"></i><i style="background:#fff"></i></div></div>
+</div>
+
+<!-- ========== 1. ONBOARDING ========== -->
+<div class="screen">
+  <div class="label"><span class="num">01</span><h2>Onboarding &amp; Permissions</h2><p>One screen. Explains value, then lets the user choose what the AI can access.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/welcome</span></div>
+  <div class="frame" style="background:#f6f6f6;justify-content:center;align-items:center">
+    <div style="display:flex;gap:40px;align-items:center;max-width:920px;width:100%">
+      <div style="flex:1">
+        <div style="width:56px;height:56px;border-radius:14px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700">S</div>
+        <h2 style="font-size:30px;margin:18px 0 8px">Smart Messenger</h2>
+        <p style="font-size:15px;color:#555;line-height:1.6;margin:0 0 20px">See what matters first, understand chats in seconds, reply faster, and never forget a commitment. You stay in control of every message sent.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px">
+          <div>▣ &nbsp;Smart inbox ranks what needs attention</div>
+          <div>✦ &nbsp;AI summaries and reply drafts</div>
+          <div>◷ &nbsp;Deadlines become reminders, with your OK</div>
+          <div>◈ &nbsp;Memory you can see, edit and delete</div>
+        </div>
+      </div>
+      <div class="card" style="width:420px;padding:22px">
+        <b style="font-size:16px">Your privacy choices</b>
+        <p class="note" style="margin:4px 0 12px">You can change these anytime in Settings.</p>
+        <div class="set"><div class="tx"><b>Rank chats using metadata</b><span>Time, unread status, how often you talk. Processed on device.</span></div><div class="tog on"></div></div>
+        <div class="set"><div class="tx"><b>Allow AI to read selected chats</b><span>Only chats you pick. Minimal context is sent to the AI provider.</span></div><div class="tog on"></div></div>
+        <div class="set"><div class="tx"><b>Suggest memories</b><span>Nothing is saved without your approval.</span></div><div class="tog"></div></div>
+        <div class="set" style="border:0"><div class="tx"><b>AI never sends messages</b><span>Every message needs your explicit approval.</span></div><span class="tag solid">Always on</span></div>
+        <div style="display:flex;gap:10px;margin-top:14px"><span class="btn pri lg" style="flex:1;text-align:center">Get Started</span><span class="btn ghost lg">Learn more</span></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 2. SMART INBOX ========== -->
+<div class="screen">
+  <div class="label"><span class="num">02</span><h2>Chats — Smart Inbox</h2><p>Ranked by importance, with a short reason under each priority chat. Main pane shows a quick brief.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/chats</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i on"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Chats</b><div class="icons">✎ &nbsp;⋮</div></div>
+      <div class="search">⌕ &nbsp;Search or start a new chat</div>
+      <div class="chips"><span class="chip on">Important</span><span class="chip">All</span><span class="chip">Groups</span><span class="chip">Unread</span></div>
+      <div class="group-t">Needs attention</div>
+      <div class="row"><div class="av">PM</div><div class="meta"><div class="top"><span>Priya (Project Manager)</span><span class="time u">10:42</span></div><div class="sub"><span class="t">Can you send the report by 4 PM?</span><span class="badge">2</span></div><div class="why">↑ Deadline today · Request · Starred contact</div></div></div>
+      <div class="row"><div class="av">TG</div><div class="meta"><div class="top"><span>Product Team</span><span class="time u">09:15</span></div><div class="sub"><span class="t">Ravi: Product meeting is tomorrow 11 AM</span><span class="badge">5</span></div><div class="why">↑ Event tomorrow · Active group</div></div></div>
+      <div class="row"><div class="av">AK</div><div class="meta"><div class="top"><span>Arjun</span><span class="time u">Yesterday</span></div><div class="sub"><span class="t">Are we meeting this weekend?</span><span class="badge">1</span></div><div class="why">↑ Question waiting · You usually reply fast</div></div></div>
+      <div class="group-t">Everything else</div>
+      <div class="row"><div class="av">MO</div><div class="meta"><div class="top"><span>Mom</span><span class="time">Yesterday</span></div><div class="sub"><span class="t">Call me when free ❤</span></div></div></div>
+      <div class="row dim"><div class="av">SH</div><div class="meta"><div class="top"><span>ShopDeals</span><span class="time">11:05</span></div><div class="sub"><span class="t">Get 50% off today only!</span><span class="tag">Promo</span></div></div></div>
+    </div>
+    <div class="main">
+      <div class="pad" style="flex:1;display:flex;flex-direction:column;gap:14px">
+        <div><div style="font-size:20px;font-weight:700">Good morning, Uday</div><div class="note">3 chats need attention · 1 deadline today</div></div>
+        <div class="card ai-card">
+          <span class="ai">Today’s brief</span>
+          <ul style="margin:10px 0 0;padding-left:18px;font-size:13.5px;line-height:1.8">
+            <li><b>Priya</b> needs the project report by <b>4 PM today</b>.</li>
+            <li><b>Product Team</b> meeting tomorrow at 11 AM.</li>
+            <li><b>Arjun</b> asked about weekend plans. No reply yet.</li>
+          </ul>
+          <div class="acts" style="margin-top:12px"><span class="btn pri">Open Priya’s chat</span><span class="btn">View all pending</span></div>
+        </div>
+        <div class="empty"><div style="font-size:34px;color:#bbb">▣</div><b>Select a chat to start</b><span class="note">Your messages stay private. AI only reads chats you allow.</span></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 3. CHAT + COPILOT ========== -->
+<div class="screen">
+  <div class="label"><span class="num">03</span><h2>Chat View + AI Copilot</h2><p>Familiar chat layout. Copilot sits above the composer with a draft reply and a detected deadline.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/chats/priya</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i on"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Chats</b><div class="icons">✎ &nbsp;⋮</div></div>
+      <div class="search">⌕ &nbsp;Search or start a new chat</div>
+      <div class="chips"><span class="chip on">Important</span><span class="chip">All</span><span class="chip">Groups</span></div>
+      <div class="row sel"><div class="av">PM</div><div class="meta"><div class="top"><span>Priya (Project Manager)</span><span class="time">10:42</span></div><div class="sub"><span class="t">Can you send the report by 4 PM?</span></div><div class="why">↑ Deadline today · Request</div></div></div>
+      <div class="row"><div class="av">TG</div><div class="meta"><div class="top"><span>Product Team</span><span class="time u">09:15</span></div><div class="sub"><span class="t">Ravi: Product meeting is tomorrow</span><span class="badge">5</span></div></div></div>
+      <div class="row"><div class="av">AK</div><div class="meta"><div class="top"><span>Arjun</span><span class="time u">Yesterday</span></div><div class="sub"><span class="t">Are we meeting this weekend?</span><span class="badge">1</span></div></div></div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="av sm">PM</div><div><div class="n">Priya (Project Manager)</div><div class="s">AI access: on for this chat</div></div><div class="r"><span class="btn">✦ Summarize</span><span style="color:#555">⌕ &nbsp;⋮</span></div></div>
+      <div class="msgs">
+        <span class="day">Today</span>
+        <div class="b">Morning! How’s the Q3 report coming along?<small>10:38</small></div>
+        <div class="b out">Almost done, just reviewing the numbers.<small>10:40 ✓✓</small></div>
+        <div class="b">Great. Can you send the report by 4 PM? Leadership review is at 5.<small>10:42</small></div>
+      </div>
+      <div class="copilot">
+        <div style="display:flex;align-items:center"><span class="ai">AI suggested reply</span>
+          <div class="tone"><span class="chip on">Concise</span><span class="chip">Professional</span><span class="chip">Friendly</span></div></div>
+        <div class="draft">I’m finishing the final review and will share the report by 4 PM today.</div>
+        <div class="acts"><span class="btn pri">Approve &amp; Send…</span><span class="btn">✎ Edit</span><span class="btn">↻ Regenerate</span><span class="btn ghost">Dismiss</span></div>
+        <div class="hint"><span class="tag">Deadline found</span><span style="flex:1">Send Q3 report to Priya · <b>Today, 4:00 PM</b></span><span class="btn">+ Add reminder</span></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div>🎤&#xFE0E;</div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 4. SUMMARY DRAWER ========== -->
+<div class="screen">
+  <div class="label"><span class="num">04</span><h2>Conversation Summary</h2><p>Opens as a right drawer (like WhatsApp “Contact info”), so the chat stays visible.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/chats/product-team/summary</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i on"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list" style="width:300px">
+      <div class="list-h"><b>Chats</b><div class="icons">✎ &nbsp;⋮</div></div>
+      <div class="search">⌕ &nbsp;Search</div>
+      <div class="row"><div class="av">PM</div><div class="meta"><div class="top"><span>Priya</span><span class="time">10:45</span></div><div class="sub"><span class="t">You: I’m finishing the final…</span></div></div></div>
+      <div class="row sel"><div class="av">TG</div><div class="meta"><div class="top"><span>Product Team</span><span class="time">09:15</span></div><div class="sub"><span class="t">Ravi: Product meeting is tomorrow</span></div></div></div>
+      <div class="row"><div class="av">AK</div><div class="meta"><div class="top"><span>Arjun</span><span class="time u">Yesterday</span></div><div class="sub"><span class="t">Are we meeting this weekend?</span><span class="badge">1</span></div></div></div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="av sm">TG</div><div><div class="n">Product Team</div><div class="s">Ravi, Neha, Sam, You</div></div><div class="r"><span class="btn pri">✦ Summary</span></div></div>
+      <div class="msgs" style="padding:16px 28px">
+        <div class="b"><b style="font-size:12px">Neha</b><br>Has anyone seen the new mockups?<small>08:50</small></div>
+        <div class="b"><b style="font-size:12px">Sam</b><br>Yes, looks good. Need final copy from Uday.<small>09:02</small></div>
+        <div class="b"><b style="font-size:12px">Ravi</b><br>The product meeting is scheduled for tomorrow 11 AM. Uday, can you bring the launch copy?<small>09:15</small></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div></div>
+    </div>
+    <div class="drawer">
+      <div class="dh"><span class="ai">Summary</span><span class="note" style="font-weight:400">last 24 messages</span><span class="x">✕</span></div>
+      <div class="sec"><h4>Key points</h4><ul><li>New mockups shared and approved by Sam.</li><li>Product meeting set for tomorrow, 11 AM.</li></ul></div>
+      <div class="sec"><h4>Questions for you</h4><ul><li>Ravi: “Can you bring the launch copy?”</li></ul></div>
+      <div class="sec"><h4>Deadlines &amp; commitments</h4>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="flex:1">Bring launch copy · <b>Tomorrow 11 AM</b></span><span class="btn">+ Remind</span></div></div>
+      <div class="sec" style="border:0"><h4>Suggested reply</h4>
+        <div class="draft" style="margin-top:0">Sure, I’ll bring the final launch copy to tomorrow’s meeting.</div>
+        <div class="acts"><span class="btn pri">Use reply</span><span class="btn">↻</span></div>
+        <p class="src" style="margin:10px 0 0">Only this chat was sent to the AI. Summary is not stored.</p></div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 5. REVIEW & SEND ========== -->
+<div class="screen">
+  <div class="label"><span class="num">05</span><h2>Review &amp; Send</h2><p>Modal over the chat. Recipient and full message are visible. Nothing is sent before “Send Message”.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/chats/priya</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i on"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list"><div class="list-h"><b>Chats</b></div><div class="search">⌕ &nbsp;Search</div>
+      <div class="row sel"><div class="av">PM</div><div class="meta"><div class="top"><span>Priya (Project Manager)</span><span class="time">10:42</span></div><div class="sub"><span class="t">Can you send the report by 4 PM?</span></div></div></div></div>
+    <div class="main">
+      <div class="ch"><div class="av sm">PM</div><div class="n">Priya (Project Manager)</div></div>
+      <div class="msgs"><div class="b">Can you send the report by 4 PM? Leadership review is at 5.<small>10:42</small></div></div>
+      <div class="composer"><div class="input">Type a message</div></div>
+    </div>
+    <div class="overlay">
+      <div class="modal">
+        <div class="mh">Review before sending</div>
+        <div class="mb">
+          <div class="field"><label>To</label>
+            <div class="v" style="display:flex;align-items:center;gap:10px"><div class="av sm">PM</div><div><b>Priya (Project Manager)</b><div class="src">Direct chat · +91 ••••• ••210</div></div></div></div>
+          <div class="field"><label>Message</label>
+            <div class="v" style="min-height:70px;line-height:1.5">I’m finishing the final review and will share the report by 4 PM today.</div>
+            <div class="src" style="margin-top:6px">✦ Drafted by AI · edited by you</div></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span class="chk on">✓</span>Also add reminder: “Send Q3 report” · Today 4:00 PM</div>
+        </div>
+        <div class="mf"><span class="btn ghost lg">Cancel</span><span class="btn">✎ Edit</span><span class="btn pri lg">Send Message</span></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 6. REMINDERS ========== -->
+<div class="screen">
+  <div class="label"><span class="num">06</span><h2>Reminders</h2><p>List of tasks with source chat and deadline. Selecting one opens detail/edit on the right.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/reminders</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i on"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Reminders</b><span class="btn pri">+ Add</span></div>
+      <div class="chips"><span class="chip on">Upcoming · 3</span><span class="chip">Completed · 8</span></div>
+      <div class="group-t">Today</div>
+      <div class="row sel"><span class="chk"></span><div class="meta"><div class="top"><span>Send Q3 report</span><span class="time u">4:00 PM</span></div><div class="why">From: Priya (Project Manager)</div></div></div>
+      <div class="group-t">Tomorrow</div>
+      <div class="row"><span class="chk"></span><div class="meta"><div class="top"><span>Bring launch copy</span><span class="time">11:00 AM</span></div><div class="why">From: Product Team</div></div></div>
+      <div class="group-t">This week</div>
+      <div class="row"><span class="chk"></span><div class="meta"><div class="top"><span>Submit final report</span><span class="time">Fri</span></div><div class="why">From: Ravi</div></div></div>
+      <div class="group-t">Suggested · needs your OK</div>
+      <div class="row" style="border:1.5px dashed #888;margin:4px 12px;border-radius:8px"><div class="meta"><div class="top"><span>Reply to Arjun about weekend</span><span class="time">Sat?</span></div><div class="acts" style="margin-top:6px"><span class="btn pri">Add</span><span class="btn ghost">Ignore</span></div></div></div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="n">Reminder details</div><div class="r"><span class="btn">✓ Mark completed</span><span class="btn ghost">Delete</span></div></div>
+      <div class="pad" style="max-width:620px">
+        <div class="field"><label>Task</label><div class="v">Send Q3 report</div></div>
+        <div class="grid2">
+          <div class="field"><label>Date</label><div class="v">Today, Oct 27</div></div>
+          <div class="field"><label>Time</label><div class="v">4:00 PM</div></div>
+        </div>
+        <div class="field"><label>Notify me</label><div class="v">30 minutes before ▾</div></div>
+        <div class="field"><label>Source</label>
+          <div class="card" style="display:flex;gap:10px;align-items:center"><div class="av sm">PM</div><div style="flex:1"><b style="font-size:13px">Priya (Project Manager)</b><div class="src">“Can you send the report by 4 PM?” · 10:42</div></div><span class="btn">Open chat →</span></div></div>
+        <div class="acts" style="margin-top:6px"><span class="btn pri">Save changes</span><span class="btn ghost">Cancel</span></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 7. ASSISTANT / IMPORTANT CONTACTS ========== -->
+<div class="screen">
+  <div class="label"><span class="num">07</span><h2>Assistant — Important Contacts &amp; Pending Actions</h2><p>Cross-chat view. Ranking is transparent: each contact shows why it ranks high.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/assistant</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i"><span class="g">▣</span>Chats</div>
+      <div class="i on"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Assistant</b></div>
+      <div class="chips"><span class="chip on">Important contacts</span><span class="chip">Pending</span><span class="chip">Ask AI</span></div>
+      <div class="row sel"><b style="width:16px">1</b><div class="av">PM</div><div class="meta"><div class="top"><span>Priya</span><span class="badge">2</span></div><div class="why">Deadline today · Starred</div></div></div>
+      <div class="row"><b style="width:16px">2</b><div class="av">TG</div><div class="meta"><div class="top"><span>Product Team</span><span class="badge">5</span></div><div class="why">Event tomorrow · Mentioned you</div></div></div>
+      <div class="row"><b style="width:16px">3</b><div class="av">AK</div><div class="meta"><div class="top"><span>Arjun</span><span class="badge">1</span></div><div class="why">Open question · Frequent contact</div></div></div>
+      <div class="row"><b style="width:16px">4</b><div class="av">MO</div><div class="meta"><div class="top"><span>Mom</span></div><div class="why">Frequent contact</div></div></div>
+      <div class="row dim"><b style="width:16px">9</b><div class="av">SH</div><div class="meta"><div class="top"><span>ShopDeals</span></div><div class="why">Promotional · Never replied</div></div></div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="av sm">PM</div><div><div class="n">Priya (Project Manager)</div><div class="s">Priority score 92 / 100</div></div><div class="r"><span class="btn pri">Open chat →</span></div></div>
+      <div class="pad">
+        <div class="card" style="margin-bottom:14px">
+          <b style="font-size:14px">Why this is ranked #1</b>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:13px">
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:190px">Deadline in message</span><div class="bar-s"><i style="width:95%"></i></div><span class="src">high</span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:190px">Marked important by you</span><div class="bar-s"><i style="width:100%"></i></div><span class="src">yes</span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:190px">How often you talk</span><div class="bar-s"><i style="width:70%"></i></div><span class="src">daily</span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:190px">Your usual reply speed</span><div class="bar-s"><i style="width:80%"></i></div><span class="src">~12 min</span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:190px">Time since message</span><div class="bar-s"><i style="width:40%"></i></div><span class="src">2 h</span></div>
+          </div>
+          <div class="acts" style="margin-top:14px"><span class="btn">★ Unmark important</span><span class="btn ghost">This ranking is wrong</span></div>
+        </div>
+        <div class="card ai-card">
+          <span class="ai">Pending across chats</span>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:13px">
+            <div style="display:flex;gap:10px;align-items:center"><span class="chk"></span><span style="flex:1">Send Q3 report to Priya · Today 4 PM</span><span class="tag">Reminder set</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><span class="chk"></span><span style="flex:1">Reply to Ravi about launch copy</span><span class="btn">Draft reply</span></div>
+            <div style="display:flex;gap:10px;align-items:center"><span class="chk"></span><span style="flex:1">Answer Arjun: weekend plans</span><span class="btn">Draft reply</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 8. MEMORY + DETAIL ========== -->
+<div class="screen">
+  <div class="label"><span class="num">08</span><h2>Memory &amp; Memory Detail</h2><p>Category filters and cards on the left. Selecting a card shows source, edit and delete on the right.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/memory</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i on"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Memory</b><span class="btn pri">+ Add</span></div>
+      <div class="search">⌕ &nbsp;Search memory</div>
+      <div class="chips"><span class="chip on">All</span><span class="chip">Facts</span><span class="chip">Preferences</span><span class="chip">People</span><span class="chip">Projects</span></div>
+      <div style="padding:4px 16px;display:flex;flex-direction:column;gap:8px">
+        <div class="card" style="background:#ececec;border-color:#111"><span class="tag">People</span><div style="font-size:13.5px;margin-top:6px">Ravi is the project lead.</div><div class="src" style="margin-top:4px">From Product Team · Oct 20</div></div>
+        <div class="card"><span class="tag">Preferences</span><div style="font-size:13.5px;margin-top:6px">I prefer concise replies.</div><div class="src" style="margin-top:4px">Added by you</div></div>
+        <div class="card"><span class="tag">Projects</span><div style="font-size:13.5px;margin-top:6px">Product launch is scheduled for next month.</div><div class="src" style="margin-top:4px">From Product Team · Oct 22</div></div>
+        <div class="card ai-card"><span class="ai">Suggested</span><div style="font-size:13.5px;margin-top:6px">Priya is your project manager.</div><div class="acts" style="margin-top:8px"><span class="btn pri">Save</span><span class="btn ghost">Not now</span></div></div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="n">Memory detail</div><div class="r"><span class="btn">✎ Edit</span><span class="btn ghost">🗑&#xFE0E; Delete</span></div></div>
+      <div class="pad" style="max-width:620px">
+        <div class="field"><label>Saved information</label><div class="v">Ravi is the project lead.</div></div>
+        <div class="grid2">
+          <div class="field"><label>Category</label><div class="v">People ▾</div></div>
+          <div class="field"><label>Saved</label><div class="v">Oct 20, 2026 · approved by you</div></div>
+        </div>
+        <div class="field"><label>Source context</label>
+          <div class="card"><div class="src" style="margin-bottom:6px">Product Team · Oct 20, 14:02</div><div style="font-size:13px;line-height:1.5">“Ravi will lead the project from now on, please route updates to him.”</div><div class="acts" style="margin-top:10px"><span class="btn">Open chat →</span></div></div></div>
+        <div class="field"><label>Used for</label><div class="note">Ranking Ravi’s messages higher · personalizing reply drafts</div></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- ========== 9. SETTINGS & PRIVACY ========== -->
+<div class="screen">
+  <div class="label"><span class="num">09</span><h2>Settings &amp; Privacy</h2><p>Section list on the left, controls on the right. Privacy is the first section.</p></div>
+  <div class="browser"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">smartmessenger.app/settings/privacy</span></div>
+  <div class="frame">
+    <div class="rail">
+      <div class="i"><span class="g">▣</span>Chats</div>
+      <div class="i"><span class="g">✦</span>Assistant</div>
+      <div class="i"><span class="g">◷</span>Reminders</div>
+      <div class="i"><span class="g">◈</span>Memory</div>
+      <div class="sp"></div>
+      <div class="i on"><span class="g">⚙&#xFE0E;</span>Settings</div>
+      <div class="me"></div>
+    </div>
+    <div class="list">
+      <div class="list-h"><b>Settings</b></div>
+      <div class="row" style="border-bottom:1px solid #eee"><div class="av lg" style="width:52px;height:52px;font-size:16px">UK</div><div class="meta"><div class="top"><span>Uday K</span></div><div class="why">Account · Profile</div></div></div>
+      <div class="row sel"><span style="width:20px">⛉</span><div class="meta"><div class="top"><span>Privacy &amp; AI data</span></div></div></div>
+      <div class="row"><span style="width:20px">◈</span><div class="meta"><div class="top"><span>Memory management</span></div></div></div>
+      <div class="row"><span style="width:20px">◔</span><div class="meta"><div class="top"><span>Notifications</span></div></div></div>
+      <div class="row"><span style="width:20px">◐</span><div class="meta"><div class="top"><span>Appearance</span></div></div></div>
+      <div class="row"><span style="width:20px">ⓘ</span><div class="meta"><div class="top"><span>Security &amp; data info</span></div></div></div>
+    </div>
+    <div class="main">
+      <div class="ch"><div class="n">Privacy &amp; AI data</div></div>
+      <div class="pad" style="overflow:hidden">
+        <div class="grid2">
+          <div class="card">
+            <b style="font-size:14px">AI access</b>
+            <div class="set"><div class="tx"><b>Metadata ranking</b><span>On device. No message text used.</span></div><div class="tog on"></div></div>
+            <div class="set"><div class="tx"><b>Content analysis</b><span>Only in chats you allow</span></div><div class="tog on"></div></div>
+            <div class="set"><div class="tx"><b>Chats with AI access</b><span>Priya, Product Team, Ravi</span></div><span class="btn">Manage</span></div>
+            <div class="set" style="border:0"><div class="tx"><b>Suggest memories</b><span>Always asks before saving</span></div><div class="tog"></div></div>
+          </div>
+          <div class="card">
+            <b style="font-size:14px">Your data</b>
+            <div class="set"><div class="tx"><b>Saved memories</b><span>12 items</span></div><span class="btn">View</span></div>
+            <div class="set"><div class="tx"><b>Export my data</b><span>Reminders, memory, settings</span></div><span class="btn">Export</span></div>
+            <div class="set"><div class="tx"><b>Delete all memory</b><span>Cannot be undone</span></div><span class="btn">Delete</span></div>
+            <div class="set" style="border:0"><div class="tx"><b>Delete account &amp; data</b><span>Removes everything we store</span></div><span class="btn pri">Delete…</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;font-size:13px;line-height:1.6">
+          <b style="font-size:14px">What is sent to the AI provider</b>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:8px">
+            <div>✓ Recent messages from the chat you open (minimal context)</div>
+            <div>✗ Your full inbox or chats without AI access</div>
+            <div>✓ Approved memory relevant to the draft</div>
+            <div>✗ Raw message text in our logs</div>
+          </div>
+          <div class="note" style="margin-top:8px">Provider retention policy: shown here once verified. Don’t assume ZDR applies by default.</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+</div>
+</body>
+</html>

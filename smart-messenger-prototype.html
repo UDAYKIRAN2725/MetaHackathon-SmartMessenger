@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Messenger – Clickable Wireframe</title>
+<style>
+/* ============================================================
+   Smart Messenger – clickable wireframe (pure HTML + CSS, no JS)
+   Navigation state is held in hidden radio/checkbox inputs.
+   ============================================================ */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#dcdcdc;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111}
+body>input{display:none}
+label{cursor:pointer}
+.app{height:100vh;min-height:600px;display:flex;flex-direction:column;background:#fff}
+#x-dark:checked ~ .app{filter:invert(1)}
+
+/* Top strip */
+.strip{height:34px;flex:none;background:#111;color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px;font-size:12px}
+.strip b{font-size:13px}
+.strip .sp{flex:1}
+.strip label{border:1px solid #666;border-radius:5px;padding:3px 10px}
+.strip label:hover{background:#333}
+
+/* Shell */
+.shell{flex:1;display:flex;position:relative;min-height:0}
+.pg-onb{display:none;flex:1;background:#f5f5f5;align-items:center;justify-content:center;padding:24px;overflow:auto}
+#p-onb:checked ~ .app .pg-onb{display:flex}
+#p-onb:checked ~ .app .shell{display:none}
+
+/* Rail */
+.rail{width:76px;flex:none;background:#efefef;border-right:1px solid #d4d4d4;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px}
+.rail .i{width:60px;padding:8px 0;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:#555;position:relative}
+.rail .i:hover{background:#e0e0e0}
+.rail .g{font-size:18px;line-height:1}
+.rail .fill{flex:1}
+.rail .me{width:36px;height:36px;border-radius:50%;background:#bdbdbd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#333}
+.rail .pip{position:absolute;top:6px;right:12px;width:8px;height:8px;border-radius:50%;background:#111;border:2px solid #efefef}
+
+/* Panels */
+.lp,.mp,.drawer,.ov{display:none}
+.list{width:350px;flex:none;border-right:1px solid #d4d4d4;flex-direction:column;background:#fff;min-height:0;overflow:auto}
+.list-h{padding:16px 16px 12px;display:flex;justify-content:space-between;align-items:center}
+.list-h b{font-size:20px}
+.icons{color:#555;font-size:15px}
+.search{margin:0 16px 10px;background:#f1f1f1;border-radius:8px;padding:9px 12px;font-size:13px;color:#8a8a8a}
+.chips{display:flex;gap:8px;padding:0 16px 10px;flex-wrap:wrap}
+.chip{border:1px solid #c9c9c9;border-radius:999px;padding:4px 12px;font-size:12px;color:#444;background:#fff;white-space:nowrap}
+.chip:hover{border-color:#111}
+.group-t{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#777;padding:10px 16px 4px}
+.row{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid #f0f0f0;align-items:center}
+label.row:hover{background:#f4f4f4}
+.row.dim{opacity:.6}
+.av{width:42px;height:42px;border-radius:50%;background:#cfcfcf;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#333}
+.av.sm{width:34px;height:34px;font-size:11px}
+.meta{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;gap:8px}
+.time{font-size:11px;color:#777;font-weight:400;white-space:nowrap}
+.time.u{color:#111;font-weight:700}
+.sub{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#666;margin-top:3px;gap:8px}
+.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.why{font-size:11px;color:#777;margin-top:3px}
+.badge{background:#111;color:#fff;border-radius:999px;font-size:11px;min-width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;flex:none}
+.tag{font-size:10px;border:1px solid #999;border-radius:4px;padding:1px 6px;color:#333;font-weight:600;white-space:nowrap}
+.tag.solid{background:#111;color:#fff;border-color:#111}
+.foot{margin-top:auto;padding:12px 16px;font-size:11.5px;color:#777;border-top:1px solid #eee;line-height:1.5}
+.foot label{text-decoration:underline;color:#111}
+
+.main{flex:1;flex-direction:column;background:#f6f6f6;min-width:0;min-height:0}
+.ch{height:60px;background:#efefef;border-bottom:1px solid #d4d4d4;display:flex;align-items:center;gap:12px;padding:0 18px;flex:none}
+.ch .n{font-weight:600;font-size:15px}
+.ch .s{font-size:12px;color:#777}
+.ch .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.msgs{flex:1;padding:16px 48px;display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0;
+      background-image:radial-gradient(#e0e0e0 1px,transparent 1px);background-size:16px 16px}
+.day{align-self:center;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;color:#666;padding:3px 10px}
+.b{max-width:62%;padding:7px 11px;border-radius:8px;font-size:13.5px;line-height:1.4;background:#fff;border:1px solid #e0e0e0;align-self:flex-start}
+.b.out{align-self:flex-end;background:#dedede;border-color:#cfcfcf}
+.b small{display:block;text-align:right;font-size:10px;color:#777;margin-top:2px}
+.b .who{font-size:12px;font-weight:700}
+.sys{align-self:center;background:#fff;border:1px solid #cfcfcf;border-radius:8px;font-size:12.5px;padding:8px 12px;display:flex;gap:10px;align-items:center;max-width:80%}
+.banner{margin:0 18px 10px;border:1px solid #cfcfcf;background:#fff;border-radius:10px;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:10px;flex:none}
+.composer{height:60px;background:#efefef;display:flex;align-items:center;gap:12px;padding:0 18px;border-top:1px solid #d4d4d4;flex:none;color:#555}
+.input{flex:1;background:#fff;border-radius:8px;padding:10px 14px;font-size:13px;color:#8a8a8a;border:1px solid #e0e0e0}
+
+/* AI copilot – dashed = AI generated */
+.copilot{margin:0 18px 10px;border:1.5px dashed #444;border-radius:10px;background:#fff;padding:12px 14px;flex:none}
+.ai{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.ai::before{content:"✦";font-size:12px}
+.draft{margin:8px 0 10px;padding:10px 12px;background:#f3f3f3;border-radius:8px;font-size:13.5px;line-height:1.45}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;border:1px solid #111;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;background:#fff;color:#111;white-space:nowrap}
+.btn:hover{background:#eee}
+.btn.pri{background:#111;color:#fff}
+.btn.pri:hover{background:#333}
+.btn.ghost{border-color:#c7c7c7;color:#555}
+.btn.lg{padding:10px 22px;font-size:14px}
+.tone{display:flex;gap:6px;margin-left:auto}
+.hint{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #eee;font-size:12.5px}
+.cp-min{display:none;align-items:center;gap:10px}
+
+/* Drawer */
+.drawer{width:340px;flex:none;border-left:1px solid #d4d4d4;background:#fff;flex-direction:column;overflow:auto}
+.dh{height:60px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid #e5e5e5;background:#efefef;font-weight:600;flex:none}
+.dh .x{margin-left:auto;color:#555;font-weight:400;font-size:16px;padding:4px 8px}
+.sec{padding:13px 18px;border-bottom:1px solid #eee}
+.sec h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666}
+.sec ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6}
+.note{font-size:12px;color:#777;line-height:1.5}
+.src{font-size:11px;color:#777}
+
+/* Generic */
+.pad{padding:22px 28px;overflow:auto;flex:1}
+.card{background:#fff;border:1px solid #dcdcdc;border-radius:10px;padding:14px 16px}
+.card.ai-card{border:1.5px dashed #444}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:14px}
+.field>label,.field .lb{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#666;margin-bottom:6px;cursor:default}
+.v{background:#fff;border:1px solid #cfcfcf;border-radius:7px;padding:9px 12px;font-size:13.5px;outline:none}
+[contenteditable]:focus{border-color:#111;box-shadow:0 0 0 2px #ddd}
+.chk{width:18px;height:18px;border:1.5px solid #555;border-radius:4px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:12px;background:#fff}
+.tog{width:36px;height:20px;border-radius:999px;background:#cfcfcf;position:relative;flex:none;transition:.15s}
+.tog::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.set{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid #eee}
+.set .tx{flex:1}.set .tx b{font-size:13.5px;font-weight:600;display:block}.set .tx span{font-size:12px;color:#777}
+.bar-s{height:6px;background:#e3e3e3;border-radius:999px;overflow:hidden;flex:1}
+.bar-s i{display:block;height:100%;background:#111}
+.brow{display:flex;align-items:center;gap:12px;font-size:13px}
+.brow>span:first-child{width:190px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;text-align:center;gap:6px;padding:30px}
+
+/* Local checkboxes (ticks, toggles, collapses) */
+.lc{display:none}
+.lc:checked + .chk{background:#111;border-color:#111;color:#fff}
+.lc:checked + .chk::after{content:"✓"}
+.lc:checked ~ .meta{text-decoration:line-through;opacity:.5}
+.lc:checked + .tog{background:#111}
+.lc:checked + .tog::after{left:18px}
+.cp-t:checked ~ .cp-body{display:none}
+.cp-t:checked ~ .cp-min{display:flex}
+.ai-t ~ .ai-on{display:none}
+.ai-t:checked ~ .ai-on{display:block}
+.ai-t:checked ~ .ai-off{display:none}
+
+/* Modal */
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:5}
+.modal{width:470px;max-width:92%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid #eee;font-weight:700;font-size:16px}
+.modal .mb{padding:18px 20px}
+.modal .mf{padding:14px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;background:#fafafa}
+
+/* ===================== STATE RULES ===================== */
+
+/* list panels */
+:is(#p-inbox,#p-priya,#p-psum,#p-review,#p-sent,#p-team,#p-teamsum,#p-teamrev,#p-teamsent,#p-arjun,#p-arjunrev,#p-arjunsent,#p-mom,#p-shop):checked ~ .app .ls-chats,
+#p-rem:checked ~ .app .ls-rem, #p-asst:checked ~ .app .ls-asst,
+#p-mem:checked ~ .app .ls-mem, #p-set:checked ~ .app .ls-set{display:flex}
+
+/* main panes */
+#p-inbox:checked ~ .app .mn-inbox,
+:is(#p-priya,#p-psum,#p-review,#p-sent):checked ~ .app .mn-priya,
+:is(#p-team,#p-teamsum,#p-teamrev,#p-teamsent):checked ~ .app .mn-team,
+:is(#p-arjun,#p-arjunrev,#p-arjunsent):checked ~ .app .mn-arjun,
+#p-mom:checked ~ .app .mn-mom, #p-shop:checked ~ .app .mn-shop,
+#p-rem:checked ~ .app .mn-rem, #p-asst:checked ~ .app .mn-asst,
+#p-mem:checked ~ .app .mn-mem, #p-set:checked ~ .app .mn-set,
+#p-psum:checked ~ .app .dr-psum, #p-teamsum:checked ~ .app .dr-tsum,
+#p-review:checked ~ .app .ov-review, #p-teamrev:checked ~ .app .ov-teamrev,
+#p-arjunrev:checked ~ .app .ov-arjunrev{display:flex}
+
+/* sent states */
+.only-sent,.only-tsent,.only-asent{display:none}
+#p-sent:checked ~ .app .only-sent,#p-teamsent:checked ~ .app .only-tsent,#p-arjunsent:checked ~ .app .only-asent{display:flex}
+#p-sent:checked ~ .app .b.only-sent,#p-teamsent:checked ~ .app .b.only-tsent,#p-arjunsent:checked ~ .app .b.only-asent{display:block}
+#p-sent:checked ~ .app .mn-priya .copilot,#p-arjunsent:checked ~ .app .mn-arjun .copilot{display:none}
+
+/* selected chat row */
+:is(#p-priya,#p-psum,#p-review,#p-sent):checked ~ .app .c-priya,
+:is(#p-team,#p-teamsum,#p-teamrev,#p-teamsent):checked ~ .app .c-team,
+:is(#p-arjun,#p-arjunrev,#p-arjunsent):checked ~ .app .c-arjun,
+#p-mom:checked ~ .app .c-mom,#p-shop:checked ~ .app .c-shop,
+#a-priya:checked ~ .app .ac-priya,#a-team:checked ~ .app .ac-team,#a-arjun:checked ~ .app .ac-arjun,
+#s-priv:checked ~ .app .sc-priv,#s-notif:checked ~ .app .sc-notif,#s-app:checked ~ .app .sc-app{background:#e6e6e6}
+/* opened chats lose unread badge */
+:is(#p-priya,#p-psum,#p-review,#p-sent):checked ~ .app .c-priya .badge,
+:is(#p-team,#p-teamsum,#p-teamrev,#p-teamsent):checked ~ .app .c-team .badge,
+:is(#p-arjun,#p-arjunrev,#p-arjunsent):checked ~ .app .c-arjun .badge{display:none}
+
+/* rail highlight */
+:is(#p-inbox,#p-priya,#p-psum,#p-review,#p-sent,#p-team,#p-teamsum,#p-teamrev,#p-teamsent,#p-arjun,#p-arjunrev,#p-arjunsent,#p-mom,#p-shop):checked ~ .app .nv-chats,
+#p-asst:checked ~ .app .nv-asst,#p-rem:checked ~ .app .nv-rem,#p-mem:checked ~ .app .nv-mem,#p-set:checked ~ .app .nv-set{background:#111;color:#fff}
+
+/* inbox filters */
+#f-imp:checked ~ .app .ls-chats .row:not(.r-imp),
+#f-grp:checked ~ .app .ls-chats .row:not(.r-grp),
+#f-unr:checked ~ .app .ls-chats .row:not(.r-unr){display:none}
+.gt-imp{display:none}
+#f-imp:checked ~ .app .gt-imp{display:block}
+
+/* chip highlight (filters, tones, tabs, memory categories) */
+#f-imp:checked ~ .app [for=f-imp],#f-all:checked ~ .app [for=f-all],#f-grp:checked ~ .app [for=f-grp],#f-unr:checked ~ .app [for=f-unr],
+#d-c:checked ~ .app [for=d-c],#d-p:checked ~ .app [for=d-p],#d-f:checked ~ .app [for=d-f],
+#t-up:checked ~ .app [for=t-up],#t-done:checked ~ .app [for=t-done],
+#m-all:checked ~ .app [for=m-all],#m-fact:checked ~ .app [for=m-fact],#m-pref:checked ~ .app [for=m-pref],#m-ppl:checked ~ .app [for=m-ppl],#m-proj:checked ~ .app [for=m-proj]{background:#111;color:#fff;border-color:#111}
+
+/* reply tone variants */
+.dv{display:none}
+#d-c:checked ~ .app .dv-c,#d-p:checked ~ .app .dv-p,#d-f:checked ~ .app .dv-f,#d-r:checked ~ .app .dv-r{display:inline}
+
+/* reminders tabs */
+#t-up:checked ~ .app .rl-done,#t-done:checked ~ .app .rl-up{display:none}
+
+/* memory categories */
+#m-fact:checked ~ .app .mc:not(.k-fact),#m-pref:checked ~ .app .mc:not(.k-pref),
+#m-ppl:checked ~ .app .mc:not(.k-ppl),#m-proj:checked ~ .app .mc:not(.k-proj){display:none}
+
+/* assistant + settings sub-pages */
+.ad,.spn{display:none}
+#a-priya:checked ~ .app .ad-priya,#a-team:checked ~ .app .ad-team,#a-arjun:checked ~ .app .ad-arjun,
+#s-priv:checked ~ .app .sp-priv,#s-notif:checked ~ .app .sp-notif,#s-app:checked ~ .app .sp-app{display:block}
+
+/* global toggles */
+#x-rem:not(:checked) ~ .app .if-rem,#x-rem:checked ~ .app .no-rem,
+#x-trem:not(:checked) ~ .app .if-trem,#x-trem:checked ~ .app .no-trem,
+#x-mem:not(:checked) ~ .app .if-mem,#x-mem:checked ~ .app .no-mem,
+#x-memno:checked ~ .app .no-memno,
+#x-del:not(:checked) ~ .app .if-del,#x-del:checked ~ .app .no-del{display:none !important}
+#x-rem:checked ~ .app .ck-rem{background:#111;border-color:#111;color:#fff}
+#x-rem:checked ~ .app .ck-rem::after{content:"✓"}
+#x-dark:checked ~ .app .tg-dark{background:#111}
+#x-dark:checked ~ .app .tg-dark::after{left:18px}
+
+/* Onboarding */
+.onb{display:flex;gap:40px;align-items:center;max-width:940px;width:100%}
+.logo{width:56px;height:56px;border-radius:14px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- ===== Page state ===== -->
+<input type="radio" name="p" id="p-onb" checked>
+<input type="radio" name="p" id="p-inbox">
+<input type="radio" name="p" id="p-priya">
+<input type="radio" name="p" id="p-psum">
+<input type="radio" name="p" id="p-review">
+<input type="radio" name="p" id="p-sent">
+<input type="radio" name="p" id="p-team">
+<input type="radio" name="p" id="p-teamsum">
+<input type="radio" name="p" id="p-teamrev">
+<input type="radio" name="p" id="p-teamsent">
+<input type="radio" name="p" id="p-arjun">
+<input type="radio" name="p" id="p-arjunrev">
+<input type="radio" name="p" id="p-arjunsent">
+<input type="radio" name="p" id="p-mom">
+<input type="radio" name="p" id="p-shop">
+<input type="radio" name="p" id="p-rem">
+<input type="radio" name="p" id="p-asst">
+<input type="radio" name="p" id="p-mem">
+<input type="radio" name="p" id="p-set">
+<!-- ===== Sub-state ===== -->
+<input type="radio" name="f" id="f-imp" checked><input type="radio" name="f" id="f-all"><input type="radio" name="f" id="f-grp"><input type="radio" name="f" id="f-unr">
+<input type="radio" name="d" id="d-c" checked><input type="radio" name="d" id="d-p"><input type="radio" name="d" id="d-f"><input type="radio" name="d" id="d-r">
+<input type="radio" name="t" id="t-up" checked><input type="radio" name="t" id="t-done">
+<input type="radio" name="m" id="m-all" checked><input type="radio" name="m" id="m-fact"><input type="radio" name="m" id="m-pref"><input type="radio" name="m" id="m-ppl"><input type="radio" name="m" id="m-proj">
+<input type="radio" name="a" id="a-priya" checked><input type="radio" name="a" id="a-team"><input type="radio" name="a" id="a-arjun">
+<input type="radio" name="s" id="s-priv" checked><input type="radio" name="s" id="s-notif"><input type="radio" name="s" id="s-app">
+<input type="checkbox" id="x-rem"><input type="checkbox" id="x-trem"><input type="checkbox" id="x-mem"><input type="checkbox" id="x-memno"><input type="checkbox" id="x-del"><input type="checkbox" id="x-dark">
+
+<div class="app">
+
+  <div class="strip">
+    <b>Smart Messenger</b><span style="color:#aaa">Clickable wireframe · everything with a border is clickable</span>
+    <span class="sp"></span>
+    <label for="p-inbox">Inbox</label>
+    <label for="p-onb">↺ Restart demo</label>
+  </div>
+
+  <!-- ================= ONBOARDING ================= -->
+  <section class="pg-onb">
+    <div class="onb">
+      <div style="flex:1">
+        <div class="logo">S</div>
+        <h1 style="font-size:32px;margin:18px 0 8px">Smart Messenger</h1>
+        <p style="font-size:15px;color:#555;line-height:1.6;margin:0 0 20px">See what matters first, understand chats in seconds, reply faster, and never forget a commitment. You stay in control of every message sent.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+          <div>▣ &nbsp;Smart inbox ranks what needs attention</div>
+          <div>✦ &nbsp;AI summaries and reply drafts</div>
+          <div>◷ &nbsp;Deadlines become reminders, with your OK</div>
+          <div>◈ &nbsp;Memory you can see, edit and delete</div>
+        </div>
+      </div>
+      <div class="card" style="width:430px;padding:22px">
+        <b style="font-size:16px">Your privacy choices</b>
+        <p class="note" style="margin:4px 0 8px">Tap to change. You can update these anytime in Settings.</p>
+        <label class="set"><span class="tx"><b>Rank chats using metadata</b><span>Time, unread status, how often you talk. On device.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+        <label class="set"><span class="tx"><b>Allow AI to read selected chats</b><span>Only chats you pick. Minimal context sent to the AI.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+        <label class="set"><span class="tx"><b>Suggest memories</b><span>Nothing is saved without your approval.</span></span><input type="checkbox" class="lc"><span class="tog"></span></label>
+        <div class="set" style="border:0"><div class="tx"><b>AI never sends messages</b><span>Every message needs your explicit approval.</span></div><span class="tag solid">Always on</span></div>
+        <div style="display:flex;gap:10px;margin-top:14px"><label for="p-inbox" class="btn pri lg" style="flex:1;text-align:center">Get Started →</label></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APP SHELL ================= -->
+  <div class="shell">
+
+    <nav class="rail">
+      <label for="p-inbox" class="i nv-chats"><span class="g">▣</span>Chats</label>
+      <label for="p-asst" class="i nv-asst"><span class="g">✦</span>Assistant</label>
+      <label for="p-rem" class="i nv-rem"><span class="g">◷</span>Reminders<span class="pip if-rem"></span></label>
+      <label for="p-mem" class="i nv-mem"><span class="g">◈</span>Memory</label>
+      <div class="fill"></div>
+      <label for="p-set" class="i nv-set"><span class="g">⚙&#xFE0E;</span>Settings</label>
+      <div class="me">UK</div>
+    </nav>
+
+    <!-- ========== CHATS LIST ========== -->
+    <aside class="list lp ls-chats">
+      <div class="list-h"><b>Chats</b><span class="icons">✎ &nbsp;⋮</span></div>
+      <div class="search">⌕ &nbsp;Search or start a new chat</div>
+      <div class="chips">
+        <label for="f-imp" class="chip">Important</label>
+        <label for="f-all" class="chip">All</label>
+        <label for="f-grp" class="chip">Groups</label>
+        <label for="f-unr" class="chip">Unread</label>
+      </div>
+      <div class="group-t gt-imp">Needs attention · ranked</div>
+      <label for="p-priya" class="row r-imp r-unr c-priya"><span class="av">PM</span><span class="meta"><span class="top"><span>Priya (Project Manager)</span><span class="time u">10:42</span></span><span class="sub"><span class="t">Can you send the report by 4 PM?</span><span class="badge">2</span></span><span class="why" style="display:block">↑ Deadline today · Request · Starred</span></span></label>
+      <label for="p-team" class="row r-imp r-grp r-unr c-team"><span class="av">TG</span><span class="meta"><span class="top"><span>Product Team</span><span class="time u">09:15</span></span><span class="sub"><span class="t">Ravi: Product meeting is tomorrow 11 AM</span><span class="badge">5</span></span><span class="why" style="display:block">↑ Event tomorrow · Mentioned you</span></span></label>
+      <label for="p-arjun" class="row r-imp r-unr c-arjun"><span class="av">AK</span><span class="meta"><span class="top"><span>Arjun</span><span class="time u">Yesterday</span></span><span class="sub"><span class="t">Are we meeting this weekend?</span><span class="badge">1</span></span><span class="why" style="display:block">↑ Question waiting · You usually reply fast</span></span></label>
+      <label for="p-mom" class="row c-mom"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">Yesterday</span></span><span class="sub"><span class="t">Call me when you’re free ♡</span></span></span></label>
+      <label for="p-shop" class="row dim r-unr c-shop"><span class="av">SD</span><span class="meta"><span class="top"><span>ShopDeals</span><span class="time">11:05</span></span><span class="sub"><span class="t">Get 50% off today only!</span><span class="tag">Promo</span></span></span></label>
+      <div class="foot">Ranking uses deadlines, requests, starred contacts and your reply habits. <label for="p-asst">See why →</label></div>
+    </aside>
+
+    <!-- ========== INBOX (no chat open) ========== -->
+    <main class="main mp mn-inbox">
+      <div class="pad" style="display:flex;flex-direction:column;gap:14px">
+        <div><div style="font-size:21px;font-weight:700">Good morning, Uday</div><div class="note">3 chats need attention · 1 deadline today</div></div>
+        <div class="card ai-card" style="max-width:640px">
+          <span class="ai">Today’s brief</span>
+          <ul style="margin:10px 0 0;padding-left:18px;font-size:13.5px;line-height:1.8">
+            <li><b>Priya</b> needs the project report by <b>4 PM today</b>.</li>
+            <li><b>Product Team</b> meeting tomorrow at 11 AM. Ravi asked you for the launch copy.</li>
+            <li><b>Arjun</b> asked about weekend plans. No reply yet.</li>
+          </ul>
+          <div class="acts" style="margin-top:12px"><label for="p-priya" class="btn pri">Open Priya’s chat</label><label for="p-asst" class="btn">View all pending</label></div>
+        </div>
+        <div class="empty" style="flex:1"><div style="font-size:34px;color:#bbb">▣</div><b>Select a chat to start</b><span class="note">Your messages stay private. AI only reads chats you allow.</span></div>
+      </div>
+    </main>
+
+    <!-- ========== PRIYA CHAT ========== -->
+    <main class="main mp mn-priya">
+      <div class="ch"><span class="av sm">PM</span><div><div class="n">Priya (Project Manager)</div><div class="s">AI access: on for this chat</div></div>
+        <div class="r"><label for="p-psum" class="btn">✦ Summarize</label><span style="color:#555">⌕ &nbsp;⋮</span></div></div>
+      <div class="msgs">
+        <span class="day">Today</span>
+        <div class="b">Morning! How’s the Q3 report coming along?<small>10:38</small></div>
+        <div class="b out">Almost done, just reviewing the numbers.<small>10:40 ✓✓</small></div>
+        <div class="b">Great. Can you send the report by 4 PM? Leadership review is at 5.<small>10:42</small></div>
+        <div class="b out only-sent"><span class="dv dv-c">I’m finishing the final review and will share the report by 4 PM today.</span><span class="dv dv-p">Hi Priya, I’m completing the final review now and will send the Q3 report before 4 PM today.</span><span class="dv dv-f">Hey Priya! Nearly there, just polishing it. You’ll have it by 4 PM 🙂</span><span class="dv dv-r">On it. The Q3 report will be in your inbox by 4 PM, ahead of the leadership review.</span><small>10:45 ✓ · sent with your approval</small></div>
+        <div class="sys only-sent"><span>✓ Message sent to Priya.</span>
+          <span class="if-rem">Reminder “Send Q3 report” set for <b>4:00 PM</b>.</span><label for="p-rem" class="btn if-rem">View reminders</label>
+          <span class="no-rem">Remind you at 4 PM?</span><label for="x-rem" class="btn pri no-rem">+ Add reminder</label></div>
+      </div>
+      <div class="copilot">
+        <input type="checkbox" id="cp-priya" class="lc cp-t">
+        <div class="cp-body">
+          <div style="display:flex;align-items:center"><span class="ai">AI suggested reply</span>
+            <div class="tone"><label for="d-c" class="chip">Concise</label><label for="d-p" class="chip">Professional</label><label for="d-f" class="chip">Friendly</label><label for="cp-priya" class="chip" title="Minimize">–</label></div></div>
+          <div class="draft"><span class="dv dv-c">I’m finishing the final review and will share the report by 4 PM today.</span><span class="dv dv-p">Hi Priya, I’m completing the final review now and will send the Q3 report before 4 PM today.</span><span class="dv dv-f">Hey Priya! Nearly there, just polishing it. You’ll have it by 4 PM 🙂</span><span class="dv dv-r">On it. The Q3 report will be in your inbox by 4 PM, ahead of the leadership review.</span></div>
+          <div class="acts"><label for="p-review" class="btn pri">Approve &amp; Send…</label><label for="p-review" class="btn">✎ Edit</label><label for="d-r" class="btn">↻ Regenerate</label><label for="cp-priya" class="btn ghost">Dismiss</label></div>
+          <div class="hint"><span class="tag">Deadline found</span><span style="flex:1">Send Q3 report to Priya · <b>Today, 4:00 PM</b></span>
+            <label for="x-rem" class="btn no-rem">+ Add reminder</label><span class="tag solid if-rem">✓ Reminder added</span><label for="x-rem" class="btn ghost if-rem">Undo</label></div>
+        </div>
+        <div class="cp-min"><span class="ai">AI Copilot</span><span class="note" style="flex:1">Suggestion hidden</span><label for="cp-priya" class="btn">Show suggestion</label></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div>🎤&#xFE0E;</div>
+    </main>
+
+    <!-- Priya summary drawer -->
+    <aside class="drawer dr-psum">
+      <div class="dh"><span class="ai">Summary</span><span class="note" style="font-weight:400">last 3 messages</span><label for="p-priya" class="x">✕</label></div>
+      <div class="sec"><h4>Key points</h4><ul><li>Q3 report is nearly done.</li><li>Leadership review is at 5 PM.</li></ul></div>
+      <div class="sec"><h4>Questions for you</h4><ul><li>“Can you send the report by 4 PM?”</li></ul></div>
+      <div class="sec"><h4>Deadlines</h4><div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="flex:1">Send Q3 report · <b>Today 4 PM</b></span><label for="x-rem" class="btn no-rem">+ Remind</label><span class="tag solid if-rem">✓ Added</span></div></div>
+      <div class="sec" style="border:0"><p class="src" style="margin:0">Only this chat was sent to the AI. Summary is not stored.</p></div>
+    </aside>
+
+    <!-- Review & Send – Priya -->
+    <div class="ov ov-review">
+      <div class="modal">
+        <div class="mh">Review before sending</div>
+        <div class="mb">
+          <div class="field"><span class="lb">To</span>
+            <div class="v" style="display:flex;align-items:center;gap:10px"><span class="av sm">PM</span><div><b>Priya (Project Manager)</b><div class="src">Direct chat</div></div></div></div>
+          <div class="field"><span class="lb">Message · click to edit</span>
+            <div class="v" contenteditable="true" style="min-height:70px;line-height:1.5"><span class="dv dv-c">I’m finishing the final review and will share the report by 4 PM today.</span><span class="dv dv-p">Hi Priya, I’m completing the final review now and will send the Q3 report before 4 PM today.</span><span class="dv dv-f">Hey Priya! Nearly there, just polishing it. You’ll have it by 4 PM 🙂</span><span class="dv dv-r">On it. The Q3 report will be in your inbox by 4 PM, ahead of the leadership review.</span></div>
+            <div class="src" style="margin-top:6px">✦ Drafted by AI · nothing is sent until you press Send</div></div>
+          <label for="x-rem" style="display:flex;align-items:center;gap:8px;font-size:13px"><span class="chk ck-rem"></span>Also add reminder: “Send Q3 report” · Today 4:00 PM</label>
+        </div>
+        <div class="mf"><label for="p-priya" class="btn ghost lg">Cancel</label><label for="p-sent" class="btn pri lg">Send Message</label></div>
+      </div>
+    </div>
+
+    <!-- ========== PRODUCT TEAM CHAT ========== -->
+    <main class="main mp mn-team">
+      <div class="ch"><span class="av sm">TG</span><div><div class="n">Product Team</div><div class="s">Ravi, Neha, Sam, You</div></div>
+        <div class="r"><label for="p-teamsum" class="btn pri">✦ Summary</label></div></div>
+      <div class="msgs" style="padding:16px 32px">
+        <span class="day">Today</span>
+        <div class="b"><span class="who">Neha</span><br>Has anyone seen the new mockups?<small>08:50</small></div>
+        <div class="b"><span class="who">Sam</span><br>Yes, looks good. Need final copy from Uday.<small>09:02</small></div>
+        <div class="b"><span class="who">Ravi</span><br>The product meeting is scheduled for tomorrow 11 AM. Uday, can you bring the launch copy?<small>09:15</small></div>
+        <div class="b out only-tsent">Sure, I’ll bring the final launch copy to tomorrow’s meeting.<small>09:31 ✓ · sent with your approval</small></div>
+        <div class="sys only-tsent">✓ Sent to Product Team (4 members). <label for="p-teamsum" class="btn">Back to summary</label></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div>🎤&#xFE0E;</div>
+    </main>
+    <aside class="drawer dr-tsum">
+      <div class="dh"><span class="ai">Summary</span><span class="note" style="font-weight:400">last 24 messages</span><label for="p-team" class="x">✕</label></div>
+      <div class="sec"><h4>Key points</h4><ul><li>New mockups shared and approved by Sam.</li><li>Product meeting set for tomorrow, 11 AM.</li></ul></div>
+      <div class="sec"><h4>Questions for you</h4><ul><li>Ravi: “Can you bring the launch copy?”</li></ul></div>
+      <div class="sec"><h4>Deadlines &amp; commitments</h4>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="flex:1">Bring launch copy · <b>Tomorrow 11 AM</b></span><label for="x-trem" class="btn no-trem">+ Remind</label><span class="tag solid if-trem">✓ Added</span></div></div>
+      <div class="sec" style="border:0"><h4>Suggested reply</h4>
+        <div class="draft" style="margin-top:0;border:1.5px dashed #444">Sure, I’ll bring the final launch copy to tomorrow’s meeting.</div>
+        <div class="acts"><label for="p-teamrev" class="btn pri">Review &amp; send…</label></div>
+        <p class="src" style="margin:10px 0 0">Only this chat was sent to the AI. Summary is not stored.</p></div>
+    </aside>
+    <div class="ov ov-teamrev">
+      <div class="modal">
+        <div class="mh">Review before sending</div>
+        <div class="mb">
+          <div class="field"><span class="lb">To</span><div class="v" style="display:flex;align-items:center;gap:10px"><span class="av sm">TG</span><div><b>Product Team</b><div class="src">Group · 4 members will see this</div></div></div></div>
+          <div class="field"><span class="lb">Message · click to edit</span><div class="v" contenteditable="true" style="min-height:60px;line-height:1.5">Sure, I’ll bring the final launch copy to tomorrow’s meeting.</div><div class="src" style="margin-top:6px">✦ Drafted by AI</div></div>
+        </div>
+        <div class="mf"><label for="p-teamsum" class="btn ghost lg">Cancel</label><label for="p-teamsent" class="btn pri lg">Send Message</label></div>
+      </div>
+    </div>
+
+    <!-- ========== ARJUN CHAT ========== -->
+    <main class="main mp mn-arjun">
+      <div class="ch"><span class="av sm">AK</span><div><div class="n">Arjun</div><div class="s">AI access: on for this chat</div></div></div>
+      <div class="msgs">
+        <span class="day">Yesterday</span>
+        <div class="b">Bro, are we meeting this weekend?<small>21:14</small></div>
+        <div class="b out only-asent">Yes! Saturday evening works. Same place as last time?<small>10:50 ✓ · sent with your approval</small></div>
+        <div class="sys only-asent">✓ Message sent to Arjun.</div>
+      </div>
+      <div class="copilot">
+        <span class="ai">AI suggested reply</span>
+        <div class="draft">Yes! Saturday evening works. Same place as last time?</div>
+        <div class="acts"><label for="p-arjunrev" class="btn pri">Approve &amp; Send…</label><label for="p-arjunrev" class="btn">✎ Edit</label><label for="p-inbox" class="btn ghost">Not now</label></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div>🎤&#xFE0E;</div>
+    </main>
+    <div class="ov ov-arjunrev">
+      <div class="modal">
+        <div class="mh">Review before sending</div>
+        <div class="mb">
+          <div class="field"><span class="lb">To</span><div class="v" style="display:flex;align-items:center;gap:10px"><span class="av sm">AK</span><b>Arjun</b></div></div>
+          <div class="field"><span class="lb">Message · click to edit</span><div class="v" contenteditable="true" style="min-height:60px">Yes! Saturday evening works. Same place as last time?</div><div class="src" style="margin-top:6px">✦ Drafted by AI</div></div>
+        </div>
+        <div class="mf"><label for="p-arjun" class="btn ghost lg">Cancel</label><label for="p-arjunsent" class="btn pri lg">Send Message</label></div>
+      </div>
+    </div>
+
+    <!-- ========== MOM CHAT (AI off) ========== -->
+    <main class="main mp mn-mom">
+      <div class="ch"><span class="av sm">MO</span><div><div class="n">Mom</div><div class="s">AI access: off for this chat</div></div></div>
+      <div class="msgs">
+        <span class="day">Yesterday</span>
+        <div class="b">Did you eat properly today?<small>19:02</small></div>
+        <div class="b out">Yes Ma 😊<small>19:10 ✓✓</small></div>
+        <div class="b">Call me when you’re free ♡<small>19:12</small></div>
+      </div>
+      <div style="flex:none">
+        <input type="checkbox" id="ai-mom" class="lc ai-t">
+        <div class="banner ai-off">⛉ <span style="flex:1">AI can’t read this chat. Personal chats stay private unless you allow it.</span><label for="ai-mom" class="btn">Allow for this chat</label></div>
+        <div class="copilot ai-on"><span class="ai">AI suggested reply</span><div class="draft">I’ll call you this evening after work, Ma.</div>
+          <div class="acts"><span class="btn pri">Approve &amp; Send…</span><label for="ai-mom" class="btn ghost">Turn AI off again</label></div></div>
+      </div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div>🎤&#xFE0E;</div>
+    </main>
+
+    <!-- ========== SHOP CHAT (low priority) ========== -->
+    <main class="main mp mn-shop">
+      <div class="ch"><span class="av sm">SD</span><div><div class="n">ShopDeals</div><div class="s">Business account</div></div></div>
+      <div class="msgs"><span class="day">Today</span><div class="b">🔥 Get 50% off today only! Use code SAVE50.<small>11:05</small></div></div>
+      <div class="banner"><span class="tag">Low priority</span><span style="flex:1">Ranked low: promotional, you’ve never replied.</span><span class="btn">Mute</span><span class="btn ghost">Ranking is wrong</span></div>
+      <div class="composer">☺ &nbsp;＋<div class="input">Type a message</div></div>
+    </main>
+
+    <!-- ========== REMINDERS ========== -->
+    <aside class="list lp ls-rem">
+      <div class="list-h"><b>Reminders</b><span class="btn pri">+ Add</span></div>
+      <div class="chips"><label for="t-up" class="chip">Upcoming</label><label for="t-done" class="chip">Completed</label></div>
+      <div class="rl-up">
+        <div class="group-t if-rem">Today</div>
+        <label class="row if-rem"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Send Q3 report</span><span class="time u">4:00 PM</span></span><span class="why" style="display:block">From: Priya (Project Manager)</span></span></label>
+        <div class="group-t">Tomorrow</div>
+        <label class="row if-trem"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Bring launch copy</span><span class="time">11:00 AM</span></span><span class="why" style="display:block">From: Product Team</span></span></label>
+        <label class="row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Product meeting</span><span class="time">11:00 AM</span></span><span class="why" style="display:block">From: Product Team</span></span></label>
+        <div class="group-t">This week</div>
+        <label class="row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Submit final report</span><span class="time">Fri</span></span><span class="why" style="display:block">From: Ravi</span></span></label>
+        <div class="group-t">Suggested · needs your OK</div>
+        <div class="card ai-card" style="margin:4px 14px 14px;padding:10px 12px"><div style="font-size:13.5px;font-weight:600">Reply to Arjun about the weekend</div><div class="src">From: Arjun · Sat?</div><div class="acts" style="margin-top:8px"><span class="btn pri">Add</span><span class="btn ghost">Ignore</span></div></div>
+      </div>
+      <div class="rl-done">
+        <label class="row"><input type="checkbox" class="lc" checked><span class="chk"></span><span class="meta"><span class="top"><span>Share mockups with Neha</span><span class="time">Mon</span></span><span class="why" style="display:block">From: Product Team</span></span></label>
+        <label class="row"><input type="checkbox" class="lc" checked><span class="chk"></span><span class="meta"><span class="top"><span>Book meeting room</span><span class="time">Oct 24</span></span><span class="why" style="display:block">From: Ravi</span></span></label>
+        <p class="note" style="padding:0 16px">Untick to move back to Upcoming.</p>
+      </div>
+    </aside>
+    <main class="main mp mn-rem">
+      <div class="ch"><div class="n">Reminder details</div><div class="r"><span class="btn">✓ Mark completed</span><span class="btn ghost">Delete</span></div></div>
+      <div class="pad" style="max-width:640px">
+        <div class="field"><span class="lb">Task · click to edit</span><div class="v" contenteditable="true"><span class="if-rem">Send Q3 report</span><span class="no-rem">Submit final report</span></div></div>
+        <div class="grid2">
+          <div class="field"><span class="lb">Date</span><div class="v" contenteditable="true"><span class="if-rem">Today, Oct 27</span><span class="no-rem">Friday, Oct 30</span></div></div>
+          <div class="field"><span class="lb">Time</span><div class="v" contenteditable="true"><span class="if-rem">4:00 PM</span><span class="no-rem">End of day</span></div></div>
+        </div>
+        <div class="field"><span class="lb">Notify me</span><div class="v">30 minutes before ▾</div></div>
+        <div class="field"><span class="lb">Source</span>
+          <div class="card" style="display:flex;gap:10px;align-items:center"><span class="av sm"><span class="if-rem">PM</span><span class="no-rem">RV</span></span><div style="flex:1"><b style="font-size:13px"><span class="if-rem">Priya (Project Manager)</span><span class="no-rem">Ravi</span></b><div class="src"><span class="if-rem">“Can you send the report by 4 PM?” · 10:42</span><span class="no-rem">“Please submit the final report by Friday.”</span></div></div><label for="p-priya" class="btn if-rem">Open chat →</label></div></div>
+        <div class="acts"><span class="btn pri">Save changes</span><span class="btn ghost">Cancel</span></div>
+        <p class="note no-rem" style="margin-top:18px">Tip: open Priya’s chat and tap “+ Add reminder” to see a reminder created from a conversation.</p>
+      </div>
+    </main>
+
+    <!-- ========== ASSISTANT ========== -->
+    <aside class="list lp ls-asst">
+      <div class="list-h"><b>Assistant</b></div>
+      <div class="group-t">Important contacts</div>
+      <label for="a-priya" class="row ac-priya"><b style="width:14px">1</b><span class="av">PM</span><span class="meta"><span class="top"><span>Priya</span><span class="time">92</span></span><span class="why" style="display:block">Deadline today · Starred</span></span></label>
+      <label for="a-team" class="row ac-team"><b style="width:14px">2</b><span class="av">TG</span><span class="meta"><span class="top"><span>Product Team</span><span class="time">81</span></span><span class="why" style="display:block">Event tomorrow · Mentioned you</span></span></label>
+      <label for="a-arjun" class="row ac-arjun"><b style="width:14px">3</b><span class="av">AK</span><span class="meta"><span class="top"><span>Arjun</span><span class="time">64</span></span><span class="why" style="display:block">Open question · Frequent contact</span></span></label>
+      <div class="row dim"><b style="width:14px">4</b><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">58</span></span><span class="why">Frequent contact · AI off</span></span></div>
+      <div class="row dim"><b style="width:14px">9</b><span class="av">SD</span><span class="meta"><span class="top"><span>ShopDeals</span><span class="time">12</span></span><span class="why">Promotional · Never replied</span></span></div>
+      <div class="foot">Scores are rule-based and shown in full. Tell us when a ranking is wrong.</div>
+    </aside>
+    <main class="main mp mn-asst">
+      <div class="pad">
+        <div class="ad ad-priya">
+          <div class="card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px"><span class="av sm">PM</span><b style="font-size:15px;flex:1">Priya · why ranked #1</b><label for="p-priya" class="btn pri">Open chat →</label></div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+              <div class="brow"><span>Deadline in message</span><div class="bar-s"><i style="width:95%"></i></div><span class="src">today 4 PM</span></div>
+              <div class="brow"><span>Marked important by you</span><div class="bar-s"><i style="width:100%"></i></div><span class="src">yes</span></div>
+              <div class="brow"><span>How often you talk</span><div class="bar-s"><i style="width:70%"></i></div><span class="src">daily</span></div>
+              <div class="brow"><span>Your usual reply speed</span><div class="bar-s"><i style="width:80%"></i></div><span class="src">~12 min</span></div>
+              <div class="brow"><span>Time since message</span><div class="bar-s"><i style="width:40%"></i></div><span class="src">2 h</span></div>
+            </div>
+            <div class="acts" style="margin-top:14px"><span class="btn">★ Unmark important</span><span class="btn ghost">This ranking is wrong</span></div>
+          </div>
+        </div>
+        <div class="ad ad-team">
+          <div class="card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px"><span class="av sm">TG</span><b style="font-size:15px;flex:1">Product Team · why ranked #2</b><label for="p-team" class="btn pri">Open chat →</label></div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+              <div class="brow"><span>Event / deadline</span><div class="bar-s"><i style="width:75%"></i></div><span class="src">tomorrow</span></div>
+              <div class="brow"><span>You were mentioned</span><div class="bar-s"><i style="width:90%"></i></div><span class="src">yes</span></div>
+              <div class="brow"><span>Group activity</span><div class="bar-s"><i style="width:60%"></i></div><span class="src">5 unread</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="ad ad-arjun">
+          <div class="card" style="margin-bottom:14px">
+            <div style="display:flex;align-items:center;gap:10px"><span class="av sm">AK</span><b style="font-size:15px;flex:1">Arjun · why ranked #3</b><label for="p-arjun" class="btn pri">Open chat →</label></div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px">
+              <div class="brow"><span>Question waiting for you</span><div class="bar-s"><i style="width:70%"></i></div><span class="src">yes</span></div>
+              <div class="brow"><span>How often you talk</span><div class="bar-s"><i style="width:65%"></i></div><span class="src">weekly</span></div>
+              <div class="brow"><span>Time since message</span><div class="bar-s"><i style="width:30%"></i></div><span class="src">14 h</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card ai-card">
+          <span class="ai">Pending across chats</span>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;font-size:13px">
+            <div style="display:flex;gap:10px;align-items:center"><span style="flex:1">Send Q3 report to Priya · Today 4 PM</span><span class="tag solid if-rem">Reminder set</span><label for="x-rem" class="btn no-rem">+ Remind</label><label for="p-priya" class="btn">Open</label></div>
+            <div style="display:flex;gap:10px;align-items:center"><span style="flex:1">Reply to Ravi about launch copy</span><label for="p-teamsum" class="btn">Draft reply</label></div>
+            <div style="display:flex;gap:10px;align-items:center"><span style="flex:1">Answer Arjun: weekend plans</span><label for="p-arjun" class="btn">Draft reply</label></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========== MEMORY ========== -->
+    <aside class="list lp ls-mem">
+      <div class="list-h"><b>Memory</b><span class="btn pri">+ Add</span></div>
+      <div class="search">⌕ &nbsp;Search memory</div>
+      <div class="chips"><label for="m-all" class="chip">All</label><label for="m-fact" class="chip">Facts</label><label for="m-pref" class="chip">Preferences</label><label for="m-ppl" class="chip">People</label><label for="m-proj" class="chip">Projects</label></div>
+      <div style="padding:4px 16px 16px;display:flex;flex-direction:column;gap:8px">
+        <div class="card ai-card mc k-ppl no-mem no-memno"><span class="ai">Suggested memory</span><div style="font-size:13.5px;margin-top:6px">Priya is your project manager.</div><div class="src">From Priya’s chat</div><div class="acts" style="margin-top:8px"><label for="x-mem" class="btn pri">Save</label><label for="x-memno" class="btn ghost">Not now</label></div></div>
+        <div class="card mc k-ppl if-mem"><span class="tag">People</span><div style="font-size:13.5px;margin-top:6px">Priya is your project manager.</div><div class="src" style="margin-top:4px">Saved just now · <label for="x-mem" style="text-decoration:underline">undo</label></div></div>
+        <div class="card mc k-ppl no-del" style="border-color:#111;background:#f2f2f2"><span class="tag">People</span><div style="font-size:13.5px;margin-top:6px">Ravi is the project lead.</div><div class="src" style="margin-top:4px">From Product Team · Oct 20</div></div>
+        <div class="card mc k-pref"><span class="tag">Preferences</span><div style="font-size:13.5px;margin-top:6px">I prefer concise replies.</div><div class="src" style="margin-top:4px">Added by you</div></div>
+        <div class="card mc k-proj"><span class="tag">Projects</span><div style="font-size:13.5px;margin-top:6px">Product launch is scheduled for next month.</div><div class="src" style="margin-top:4px">From Product Team · Oct 22</div></div>
+        <div class="card mc k-fact"><span class="tag">Facts</span><div style="font-size:13.5px;margin-top:6px">Leadership reviews happen Tuesdays at 5 PM.</div><div class="src" style="margin-top:4px">From Priya’s chat · Oct 13</div></div>
+      </div>
+    </aside>
+    <main class="main mp mn-mem">
+      <div class="ch"><div class="n">Memory detail</div><div class="r no-del"><label for="x-del" class="btn ghost">🗑&#xFE0E; Delete</label></div></div>
+      <div class="pad no-del" style="max-width:640px">
+        <div class="field"><span class="lb">Saved information · click to edit</span><div class="v" contenteditable="true">Ravi is the project lead.</div></div>
+        <div class="grid2">
+          <div class="field"><span class="lb">Category</span><div class="v">People ▾</div></div>
+          <div class="field"><span class="lb">Saved</span><div class="v">Oct 20, 2026 · approved by you</div></div>
+        </div>
+        <div class="field"><span class="lb">Source context</span>
+          <div class="card"><div class="src" style="margin-bottom:6px">Product Team · Oct 20, 14:02</div><div style="font-size:13px;line-height:1.5">“Ravi will lead the project from now on, please route updates to him.”</div><div class="acts" style="margin-top:10px"><label for="p-team" class="btn">Open chat →</label></div></div></div>
+        <div class="field"><span class="lb">Used for</span><div class="note">Ranking Ravi’s messages higher · personalizing reply drafts</div></div>
+        <div class="acts"><span class="btn pri">Save changes</span></div>
+      </div>
+      <div class="empty if-del" style="flex:1"><div style="font-size:30px;color:#bbb">🗑&#xFE0E;</div><b>Memory deleted</b><span class="note">“Ravi is the project lead.” was removed permanently.</span><label for="x-del" class="btn" style="margin-top:8px">Undo</label></div>
+    </main>
+
+    <!-- ========== SETTINGS ========== -->
+    <aside class="list lp ls-set">
+      <div class="list-h"><b>Settings</b></div>
+      <div class="row" style="border-bottom:1px solid #e5e5e5"><span class="av">UK</span><span class="meta"><span class="top"><span>Uday K</span></span><span class="why" style="display:block">Account · Profile</span></span></div>
+      <label for="s-priv" class="row sc-priv"><span style="width:20px">⛉</span><span class="meta"><span class="top"><span>Privacy &amp; AI data</span></span></span></label>
+      <label for="p-mem" class="row"><span style="width:20px">◈</span><span class="meta"><span class="top"><span>Memory management</span><span class="time">→</span></span></span></label>
+      <label for="s-notif" class="row sc-notif"><span style="width:20px">◔</span><span class="meta"><span class="top"><span>Notifications</span></span></span></label>
+      <label for="s-app" class="row sc-app"><span style="width:20px">◐</span><span class="meta"><span class="top"><span>Appearance</span></span></span></label>
+      <label for="p-onb" class="row"><span style="width:20px">ⓘ</span><span class="meta"><span class="top"><span>Show onboarding again</span></span></span></label>
+    </aside>
+    <main class="main mp mn-set">
+      <div class="pad">
+        <div class="spn sp-priv">
+          <h2 style="margin:0 0 14px;font-size:18px">Privacy &amp; AI data</h2>
+          <div class="grid2">
+            <div class="card">
+              <b style="font-size:14px">AI access</b>
+              <label class="set"><span class="tx"><b>Metadata ranking</b><span>On device. No message text used.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+              <label class="set"><span class="tx"><b>Content analysis</b><span>Only in chats you allow</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+              <div class="set"><div class="tx"><b>Chats with AI access</b><span>Priya, Product Team, Arjun</span></div><span class="btn">Manage</span></div>
+              <label class="set" style="border:0"><span class="tx"><b>Suggest memories</b><span>Always asks before saving</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            </div>
+            <div class="card">
+              <b style="font-size:14px">Your data</b>
+              <div class="set"><div class="tx"><b>Saved memories</b><span>5 items</span></div><label for="p-mem" class="btn">View</label></div>
+              <div class="set"><div class="tx"><b>Export my data</b><span>Reminders, memory, settings</span></div><span class="btn">Export</span></div>
+              <div class="set"><div class="tx"><b>Delete all memory</b><span>Cannot be undone</span></div><span class="btn">Delete</span></div>
+              <div class="set" style="border:0"><div class="tx"><b>Delete account &amp; data</b><span>Removes everything we store</span></div><span class="btn pri">Delete…</span></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:14px;font-size:13px;line-height:1.6">
+            <b style="font-size:14px">What is sent to the AI provider</b>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:8px">
+              <div>✓ Recent messages from the chat you open (minimal context)</div>
+              <div>✗ Your full inbox or chats without AI access</div>
+              <div>✓ Approved memories relevant to a draft</div>
+              <div>✗ Raw message text in our logs</div>
+            </div>
+            <div class="note" style="margin-top:8px">Provider data-retention policy is shown here once verified. Zero Data Retention is not assumed by default.</div>
+          </div>
+        </div>
+        <div class="spn sp-notif">
+          <h2 style="margin:0 0 14px;font-size:18px">Notifications</h2>
+          <div class="card" style="max-width:560px">
+            <label class="set"><span class="tx"><b>Important chats only</b><span>Mute low-priority and promotional chats</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Reminder alerts</b><span>Notify before deadlines</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set" style="border:0"><span class="tx"><b>Daily brief</b><span>Morning summary of what needs attention</span></span><input type="checkbox" class="lc"><span class="tog"></span></label>
+          </div>
+        </div>
+        <div class="spn sp-app">
+          <h2 style="margin:0 0 14px;font-size:18px">Appearance</h2>
+          <div class="card" style="max-width:560px">
+            <label for="x-dark" class="set"><span class="tx"><b>Dark mode</b><span>Inverted grayscale theme</span></span><span class="tog tg-dark"></span></label>
+            <div class="set" style="border:0"><div class="tx"><b>Text size</b><span>Medium</span></div><span class="btn ghost">Change</span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Messenger – Detailed Clickable Wireframes v2</title>
+<style>
+/* Smart Messenger v2 – clickable wireframe. Pure HTML + CSS (no JS). State lives in hidden radio/checkbox inputs. */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#dcdcdc;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#111}
+body>input{display:none}
+label{cursor:pointer}
+.app{height:100vh;min-height:640px;display:flex;flex-direction:column;background:#fff}
+
+/* Top strip */
+.strip{height:34px;flex:none;background:#111;color:#fff;display:flex;align-items:center;gap:12px;padding:0 16px;font-size:12px}
+.strip .sp{flex:1}
+.strip label{border:1px solid #666;border-radius:5px;padding:3px 10px}
+.strip label:hover{background:#333}
+
+.shell{flex:1;display:flex;position:relative;min-height:0}
+.pg-onb{display:none;flex:1;background:#f5f5f5;align-items:center;justify-content:center;padding:24px;overflow:auto}
+#p-onb:checked ~ .app .pg-onb{display:flex}
+#p-onb:checked ~ .app .shell{display:none}
+
+/* Rail */
+.rail{width:78px;flex:none;background:#efefef;border-right:1px solid #d4d4d4;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:6px}
+.rail .i{width:62px;padding:8px 0;border-radius:10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;color:#555;position:relative}
+.rail .i:hover{background:#e0e0e0}
+.rail .g{font-size:18px;line-height:1}
+.rail .fill{flex:1}
+.rail .me{width:36px;height:36px;border-radius:50%;background:#bdbdbd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#333}
+.rail .cnt{position:absolute;top:4px;right:10px;background:#111;color:#fff;font-size:9px;border-radius:999px;padding:1px 5px;border:2px solid #efefef}
+
+/* Panels */
+.lp,.mp,.dr,.ov,.toast{display:none}
+.list{width:370px;flex:none;border-right:1px solid #d4d4d4;flex-direction:column;background:#fff;min-height:0;overflow:auto}
+.list-h{padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.list-h b{font-size:20px}
+.search{margin:0 16px 10px;background:#f1f1f1;border-radius:8px;padding:9px 12px;font-size:13px;color:#8a8a8a}
+.chips{display:flex;gap:6px;padding:0 16px 10px;flex-wrap:wrap}
+.chip{border:1px solid #c9c9c9;border-radius:999px;padding:4px 11px;font-size:12px;color:#444;background:#fff;white-space:nowrap;display:inline-flex;gap:5px;align-items:center}
+.chip:hover{border-color:#111}
+.chip .n{font-size:10px;background:#111;color:#fff;border-radius:999px;padding:0 5px;line-height:15px}
+.seg{display:inline-flex;border:1px solid #c9c9c9;border-radius:7px;overflow:hidden;font-size:11.5px}
+.seg label{padding:4px 10px;color:#555}
+.gh{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#777;padding:10px 16px 4px;display:flex;justify-content:space-between}
+.row{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid #f0f0f0;align-items:center}
+label.row:hover{background:#f4f4f4}
+.row.read .top>span:first-child{font-weight:500}
+.row.dim{opacity:.6}
+.av{width:42px;height:42px;border-radius:50%;background:#cfcfcf;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#333}
+.av.sm{width:34px;height:34px;font-size:11px}
+.av.q{background:#fff;border:1.5px dashed #888}
+.meta{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;gap:8px}
+.time{font-size:11px;color:#777;font-weight:400;white-space:nowrap}
+.time.u{color:#111;font-weight:700}
+.sub{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#666;margin-top:3px;gap:8px}
+.t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.why{display:flex;gap:6px;align-items:center;font-size:11px;color:#777;margin-top:4px}
+.why b{margin-left:auto;font-size:11px;color:#111;border:1px solid #111;border-radius:4px;padding:0 5px}
+.badge{background:#111;color:#fff;border-radius:999px;font-size:11px;min-width:19px;height:19px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px;flex:none}
+.tag{font-size:10px;border:1px solid #999;border-radius:4px;padding:1px 6px;color:#333;font-weight:600;white-space:nowrap;background:#fff}
+.tag.solid{background:#111;color:#fff;border-color:#111}
+.foot{margin-top:auto;padding:12px 16px;font-size:11.5px;color:#777;border-top:1px solid #eee;line-height:1.5}
+.clist{display:flex;flex-direction:column}
+.clist .it{order:var(--s)}
+
+.main{flex:1;flex-direction:column;background:#f6f6f6;min-width:0;min-height:0}
+.ch{height:60px;background:#efefef;border-bottom:1px solid #d4d4d4;display:flex;align-items:center;gap:12px;padding:0 18px;flex:none}
+.ch .n{font-weight:600;font-size:15px}
+.ch .s{font-size:12px;color:#777}
+.ch .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.msgs{flex:1;padding:16px 44px;display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0;
+      background-image:radial-gradient(#e0e0e0 1px,transparent 1px);background-size:16px 16px}
+.day{align-self:center;background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;color:#666;padding:3px 10px}
+.b{max-width:62%;padding:7px 11px;border-radius:8px;font-size:13.5px;line-height:1.4;background:#fff;border:1px solid #e0e0e0;align-self:flex-start}
+.b.out{align-self:flex-end;background:#dedede;border-color:#cfcfcf}
+.b small{display:block;text-align:right;font-size:10px;color:#777;margin-top:2px}
+.sys{align-self:center;background:#fff;border:1px solid #cfcfcf;border-radius:8px;font-size:12.5px;padding:8px 12px;display:flex;gap:10px;align-items:center;max-width:86%}
+.banner{margin:0 18px 10px;border:1px solid #cfcfcf;background:#fff;border-radius:10px;padding:10px 14px;font-size:13px;display:flex;align-items:center;gap:10px;flex:none;flex-wrap:wrap}
+.composer{height:60px;background:#efefef;display:flex;align-items:center;gap:12px;padding:0 18px;border-top:1px solid #d4d4d4;flex:none;color:#555;font-size:16px}
+.input{flex:1;background:#fff;border-radius:8px;padding:10px 14px;font-size:13px;color:#8a8a8a;border:1px solid #e0e0e0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.input .filled{color:#111}
+.send{width:38px;height:38px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+
+/* AI suggestions – dashed = AI generated */
+.sugg{margin:0 18px 10px;border:1.5px dashed #444;border-radius:10px;background:#fff;padding:10px 12px;flex:none}
+.ai{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.ai::before{content:"✦";font-size:12px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.sopt{border:1px solid #cfcfcf;border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.4;background:#f7f7f7}
+.sopt i{display:block;font-style:normal;font-size:10px;font-weight:700;color:#777;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.sopt:hover{border-color:#111}
+.ctx{margin-top:8px;border-top:1px solid #eee;padding-top:8px;font-size:12px}
+.ctxb{display:none;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+.ctxb>div{background:#f3f3f3;border-radius:7px;padding:8px 10px;line-height:1.45}
+.ctxb b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#666;margin-bottom:3px}
+.ctx-t:checked ~ .ctxb{display:grid}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;border:1px solid #111;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;background:#fff;color:#111;white-space:nowrap}
+.btn:hover{background:#eee}
+.btn.pri{background:#111;color:#fff}
+.btn.pri:hover{background:#333}
+.btn.ghost{border-color:#c7c7c7;color:#555}
+.btn.lg{padding:10px 20px;font-size:14px}
+.hint{display:flex;align-items:center;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid #eee;font-size:12.5px}
+
+/* Drawer */
+.drawer{width:350px;flex:none;border-left:1px solid #d4d4d4;background:#fff;flex-direction:column;overflow:auto}
+.dh{height:60px;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid #e5e5e5;background:#efefef;font-weight:600;flex:none}
+.dh .x{margin-left:auto;color:#555;font-weight:400;font-size:16px;padding:4px 8px}
+.sec{padding:13px 18px;border-bottom:1px solid #eee}
+.sec h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#666}
+.note{font-size:12px;color:#777;line-height:1.5}
+.src{font-size:11px;color:#777}
+
+/* Generic */
+.pad{padding:22px 28px;overflow:auto;flex:1}
+.h2{font-size:19px;font-weight:700;margin:0 0 4px}
+.card{background:#fff;border:1px solid #dcdcdc;border-radius:10px;padding:14px 16px}
+.card.ai-card{border:1.5px dashed #444}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field{margin-bottom:13px}
+.lb{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#666;margin-bottom:6px}
+.v{background:#fff;border:1px solid #cfcfcf;border-radius:7px;padding:9px 12px;font-size:13.5px;outline:none}
+[contenteditable]:focus{border-color:#111;box-shadow:0 0 0 2px #ddd}
+.chk{width:18px;height:18px;border:1.5px solid #555;border-radius:4px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:12px;background:#fff}
+.tog{width:36px;height:20px;border-radius:999px;background:#cfcfcf;position:relative;flex:none;transition:.15s}
+.tog::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}
+.set{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid #eee}
+.set .tx{flex:1}.set .tx b{font-size:13.5px;font-weight:600;display:block}.set .tx span{font-size:12px;color:#777}
+.bar-s{height:6px;background:#e3e3e3;border-radius:999px;overflow:hidden;flex:1}
+.bar-s i{display:block;height:100%;background:#111}
+table.sc{width:100%;border-collapse:collapse;font-size:12.5px}
+table.sc th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#666;padding:6px 8px;border-bottom:1px solid #ddd}
+table.sc td{padding:7px 8px;border-bottom:1px solid #f0f0f0}
+table.sc td.num{font-variant-numeric:tabular-nums}
+.formula{font-family:Consolas,Menlo,monospace;font-size:12px;background:#f3f3f3;border-radius:7px;padding:10px 12px;line-height:1.7}
+.spark{display:flex;align-items:flex-end;gap:5px;height:56px}
+.spark i{flex:1;background:#111;border-radius:3px 3px 0 0;display:block}
+.spark-l{display:flex;gap:5px;font-size:10px;color:#888;margin-top:3px}.spark-l span{flex:1;text-align:center}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;text-align:center;gap:6px;padding:24px}
+
+/* Local checkboxes */
+.lc{display:none}
+.lc:checked + .chk{background:#111;border-color:#111;color:#fff}
+.lc:checked + .chk::after{content:"✓"}
+.lc:checked ~ .meta{text-decoration:line-through;opacity:.5}
+.lc:checked + .tog{background:#111}
+.lc:checked + .tog::after{left:18px}
+.ai-t ~ .ai-on{display:none}
+.ai-t:checked ~ .ai-on{display:block}
+.ai-t:checked ~ .ai-off{display:none}
+.hd:checked + .hd-box{display:none}
+.dr-t ~ .dr-box{display:none}
+.dr-t:checked ~ .dr-box{display:block}
+
+/* Modal */
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:5}
+.modal{width:500px;max-width:94%;max-height:96%;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid #eee;font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+.modal .mb{padding:16px 20px}
+.modal .mf{padding:14px 20px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;background:#fafafa}
+.mic{width:96px;height:96px;border-radius:50%;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:38px;margin:10px auto;box-shadow:0 0 0 12px #e6e6e6,0 0 0 24px #f2f2f2}
+.wave{display:flex;gap:4px;justify-content:center;align-items:center;height:30px;margin:18px 0 8px}
+.wave i{width:4px;background:#111;border-radius:2px;display:block}
+.toast{position:absolute;top:14px;right:18px;width:380px;background:#111;color:#fff;border-radius:12px;padding:14px 16px;z-index:6;box-shadow:0 10px 30px rgba(0,0,0,.3);flex-direction:column;gap:8px}
+.toast .btn{background:#111;color:#fff;border-color:#777}
+.toast .btn.pri{background:#fff;color:#111;border-color:#fff}
+
+/* Timeline */
+.tl{display:flex;flex-direction:column}
+.tl .e{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid #eee;align-items:center;font-size:13px}
+.tl .e .hr{width:70px;font-size:12px;color:#666;font-variant-numeric:tabular-nums}
+.tl .e .d{width:10px;height:10px;border-radius:50%;border:2px solid #111;flex:none}
+.tl .e.done{opacity:.5}.tl .e.done .d{background:#111}
+.tl .e.now{font-weight:700}
+
+/* ===================== STATE RULES ===================== */
+/* list panels */
+:is(#p-chats,#p-priya,#p-priyainfo,#p-priyasent,#p-mom,#p-arjun,#p-ext):checked ~ .app .ls-chats,
+:is(#p-pa,#p-pavoice,#p-pavoice2,#p-panew,#p-panotif):checked ~ .app .ls-pa,
+:is(#p-sch,#p-schnew):checked ~ .app .ls-sch,
+#p-mem:checked ~ .app .ls-mem,#p-set:checked ~ .app .ls-set{display:flex}
+/* main panes */
+#p-chats:checked ~ .app .mn-home,
+:is(#p-priya,#p-priyainfo,#p-priyasent):checked ~ .app .mn-priya,
+#p-priyainfo:checked ~ .app .dr-info,
+#p-mom:checked ~ .app .mn-mom,#p-arjun:checked ~ .app .mn-arjun,#p-ext:checked ~ .app .mn-ext,
+:is(#p-pa,#p-pavoice,#p-pavoice2,#p-panew,#p-panotif):checked ~ .app .mn-pa,
+:is(#p-sch,#p-schnew):checked ~ .app .mn-sch,
+#p-mem:checked ~ .app .mn-mem,#p-set:checked ~ .app .mn-set,
+#p-pavoice:checked ~ .app .ov-voice,
+#p-panotif:checked ~ .app .toast{display:flex}
+#p-pavoice2:checked ~ #x-voice:not(:checked) ~ .app .ov-voice2,
+#p-panew:checked ~ #x-manual:not(:checked) ~ .app .ov-panew,
+#p-schnew:checked ~ #x-sch:not(:checked) ~ .app .ov-schnew{display:flex}
+
+/* rail highlight */
+:is(#p-chats,#p-priya,#p-priyainfo,#p-priyasent,#p-mom,#p-arjun,#p-ext):checked ~ .app .nv-chats,
+:is(#p-pa,#p-pavoice,#p-pavoice2,#p-panew,#p-panotif):checked ~ .app .nv-pa,
+:is(#p-sch,#p-schnew):checked ~ .app .nv-sch,
+#p-mem:checked ~ .app .nv-mem,#p-set:checked ~ .app .nv-set{background:#111;color:#fff}
+
+/* selected rows */
+:is(#p-priya,#p-priyainfo,#p-priyasent):checked ~ .app .c-priya,
+#p-mom:checked ~ .app .c-mom,#p-arjun:checked ~ .app .c-arjun,#p-ext:checked ~ .app .c-ext,
+#mp-priya:checked ~ .app .mc-priya,#mp-mom:checked ~ .app .mc-mom,#mp-ravi:checked ~ .app .mc-ravi{background:#e6e6e6}
+:is(#p-priya,#p-priyainfo,#p-priyasent):checked ~ .app .c-priya .badge,
+#p-mom:checked ~ .app .c-mom .badge,#p-arjun:checked ~ .app .c-arjun .badge,#p-ext:checked ~ .app .c-ext .badge{display:none}
+
+/* category filters */
+#c-fr:checked ~ .app .clist .it:not(.k-fr),
+#c-pro:checked ~ .app .clist .it:not(.k-pro),
+#c-fam:checked ~ .app .clist .it:not(.k-fam),
+#c-rel:checked ~ .app .clist .it:not(.k-rel),
+#c-ext:checked ~ .app .clist .it:not(.k-ext){display:none}
+#c-all:not(:checked) ~ .app .ktag{display:none}
+.cn{display:none}
+#c-all:checked ~ .app .cn-all,#c-fr:checked ~ .app .cn-fr,#c-pro:checked ~ .app .cn-pro,
+#c-fam:checked ~ .app .cn-fam,#c-rel:checked ~ .app .cn-rel,#c-ext:checked ~ .app .cn-ext{display:inline}
+/* sort */
+#o-recent:checked ~ .app .clist .it{order:var(--r)}
+#o-recent:checked ~ .app .clist .gh,#o-recent:checked ~ .app .clist .why{display:none}
+.memwrap{flex-direction:column;flex:1;min-height:0;display:flex}
+.only-recent{display:none}
+#o-recent:checked ~ .app .only-recent{display:block}
+#o-recent:checked ~ .app .only-smart{display:none}
+
+/* chip / segment highlight */
+#c-all:checked ~ .app [for=c-all],#c-fr:checked ~ .app [for=c-fr],#c-pro:checked ~ .app [for=c-pro],
+#c-fam:checked ~ .app [for=c-fam],#c-rel:checked ~ .app [for=c-rel],#c-ext:checked ~ .app [for=c-ext],
+#o-smart:checked ~ .app [for=o-smart],#o-recent:checked ~ .app [for=o-recent],
+#t-today:checked ~ .app [for=t-today],#t-up:checked ~ .app [for=t-up],#t-done:checked ~ .app [for=t-done],
+#sc-act:checked ~ .app [for=sc-act],#sc-hist:checked ~ .app [for=sc-hist],
+#r-once:checked ~ .app [for=r-once],#r-daily:checked ~ .app [for=r-daily],#r-weekly:checked ~ .app [for=r-weekly],#r-custom:checked ~ .app [for=r-custom],
+#mt-ppl:checked ~ .app [for=mt-ppl],#mt-rules:checked ~ .app [for=mt-rules],
+#rt-up:checked ~ .app [for=rt-up],#rt-sn:checked ~ .app [for=rt-sn],#rt-done:checked ~ .app [for=rt-done],
+#s-1:checked ~ .app [for=s-1],#s-2:checked ~ .app [for=s-2],#s-3:checked ~ .app [for=s-3],
+#s-4:checked ~ .app [for=s-4],#s-5:checked ~ .app [for=s-5],#s-6:checked ~ .app [for=s-6],
+#s-7:checked ~ .app [for=s-7],#s-8:checked ~ .app [for=s-8],#s-9:checked ~ .app [for=s-9]{background:#111;color:#fff;border-color:#111}
+#s-1:checked ~ .app [for=s-1] i,#s-2:checked ~ .app [for=s-2] i,#s-3:checked ~ .app [for=s-3] i,
+#s-4:checked ~ .app [for=s-4] i,#s-5:checked ~ .app [for=s-5] i,#s-6:checked ~ .app [for=s-6] i,
+#s-7:checked ~ .app [for=s-7] i,#s-8:checked ~ .app [for=s-8] i,#s-9:checked ~ .app [for=s-9] i{color:#ccc}
+
+/* suggestion -> composer */
+.sv{display:none}
+#s-0:checked ~ .app .sv-0,#s-1:checked ~ .app .sv-1,#s-2:checked ~ .app .sv-2,#s-3:checked ~ .app .sv-3,
+#s-4:checked ~ .app .sv-4,#s-5:checked ~ .app .sv-5,#s-6:checked ~ .app .sv-6,
+#s-7:checked ~ .app .sv-7,#s-8:checked ~ .app .sv-8,#s-9:checked ~ .app .sv-9,
+#s-0:checked ~ .app .sb-0,#s-1:checked ~ .app .sb-1,#s-2:checked ~ .app .sb-2,#s-3:checked ~ .app .sb-3,
+#s-4:checked ~ .app .sb-4,#s-5:checked ~ .app .sb-5,#s-6:checked ~ .app .sb-6,
+#s-7:checked ~ .app .sb-7,#s-8:checked ~ .app .sb-8,#s-9:checked ~ .app .sb-9{display:inline}
+.only-sent{display:none}
+#p-priyasent:checked ~ .app .mn-priya .only-sent{display:flex}
+#p-priyasent:checked ~ .app .mn-priya .b.only-sent{display:block}
+#p-priyasent:checked ~ .app .mn-priya .sugg,
+#p-priyasent:checked ~ .app .mn-priya .pre-sent{display:none}
+
+/* AI assist: optional, opened from the composer. Step 1 asks for context, step 2 shows replies */
+.hid{display:none}
+.aib{display:inline-flex;align-items:center;gap:5px;border:1.5px dashed #444;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;color:#111;background:#fff;white-space:nowrap}
+.aib:hover{background:#eee}
+.as-t:checked ~ .composer .aib{background:#111;color:#fff;border-style:solid;border-color:#111}
+.as-t ~ .as-box{display:none}
+.as-t:checked ~ .as-box{display:block}
+.go-t:checked ~ .go-ask{display:none}
+.go-t ~ .go-res{display:none}
+.go-t:checked ~ .go-res{display:block}
+.in1:checked ~ * :is(.x2,.x3),.in2:checked ~ * :is(.x1,.x3),.in3:checked ~ * :is(.x1,.x2){display:none}
+.in1:checked ~ * .ch1,.in2:checked ~ * .ch2,.in3:checked ~ * .ch3{background:#111;color:#fff;border-color:#111}
+.steps{display:flex;gap:6px;align-items:center;font-size:11px;color:#777}
+.steps i{font-style:normal;width:18px;height:18px;border-radius:50%;border:1px solid #999;display:inline-flex;align-items:center;justify-content:center;font-size:10px}
+.steps i.on{background:#111;color:#fff;border-color:#111}
+.goalbox{min-height:44px;line-height:1.45}
+.goalbar{display:flex;gap:8px;align-items:center;font-size:12.5px;background:#f3f3f3;border-radius:7px;padding:7px 10px;margin-top:8px}
+
+/* Reminders page */
+#p-rem:checked ~ .app .ls-rem,#p-rem:checked ~ .app .mn-rem{display:flex}
+#p-rem:checked ~ .app .nv-rem{background:#111;color:#fff}
+#rt-up:checked ~ .app .ls-rem .rr:not(.rt-up),
+#rt-sn:checked ~ .app .ls-rem .rr:not(.rt-sn),
+#rt-done:checked ~ .app .ls-rem .rr:not(.rt-done){display:none}
+.rdp{display:none}
+#rd-1:checked ~ .app .rdp-1,#rd-2:checked ~ .app .rdp-2,#rd-3:checked ~ .app .rdp-3,#rd-4:checked ~ .app .rdp-4,#rd-5:checked ~ .app .rdp-5{display:block}
+#rd-1:checked ~ .app .rc-1,#rd-2:checked ~ .app .rc-2,#rd-3:checked ~ .app .rc-3,#rd-4:checked ~ .app .rc-4,#rd-5:checked ~ .app .rc-5{background:#e6e6e6}
+.ric{width:34px;height:34px;border-radius:9px;background:#efefef;border:1px solid #ddd;flex:none;display:flex;align-items:center;justify-content:center;font-size:15px}
+.ric.now{background:#111;color:#fff;border-color:#111}
+.chip.on{background:#111;color:#fff;border-color:#111}
+.notif{background:#111;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px}
+.notif .acts .btn{background:#111;color:#fff;border-color:#777;padding:4px 10px}
+.notif .acts .btn.pri{background:#fff;color:#111;border-color:#fff}
+
+/* PA tabs */
+#t-today:checked ~ .app .ls-pa .tk:not(.tt-today),
+#t-up:checked ~ .app .ls-pa .tk:not(.tt-up),
+#t-done:checked ~ .app .ls-pa .tk:not(.tt-done){display:none}
+
+/* Scheduled */
+#sc-act:checked ~ .app .sh-hist,#sc-hist:checked ~ .app .sh-act{display:none}
+.wd,.rv{display:none}
+:is(#r-weekly,#r-custom):checked ~ .app .wd{display:flex}
+#r-once:checked ~ .app .rv-once,#r-daily:checked ~ .app .rv-daily,#r-weekly:checked ~ .app .rv-weekly,#r-custom:checked ~ .app .rv-custom{display:inline}
+
+/* Memory */
+#mt-ppl:checked ~ .app .mt-r,#mt-rules:checked ~ .app .mt-p{display:none}
+.mpd{display:none}
+#mp-priya:checked ~ .app .mpd-priya,#mp-mom:checked ~ .app .mpd-mom,#mp-ravi:checked ~ .app .mpd-ravi{display:block}
+
+/* global toggles */
+#x-task:not(:checked) ~ .app .if-task,#x-task:checked ~ .app .no-task,
+#x-voice:not(:checked) ~ .app .if-voice,#x-voice:checked ~ .app .no-voice,
+#x-manual:not(:checked) ~ .app .if-manual,
+#x-sch:not(:checked) ~ .app .if-sch,
+#x-pause:not(:checked) ~ .app .if-pause,#x-pause:checked ~ .app .no-pause{display:none !important}
+#x-pause:checked ~ .app .tg-pause{background:#111}
+#x-pause:checked ~ .app .tg-pause::after{left:18px}
+#x-notes:checked ~ .app .ov-notes{display:flex}
+.onb{display:flex;gap:40px;align-items:center;max-width:960px;width:100%}
+.logo{width:56px;height:56px;border-radius:14px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- Page state -->
+<input type="radio" name="p" id="p-onb" checked>
+<input type="radio" name="p" id="p-chats">
+<input type="radio" name="p" id="p-priya">
+<input type="radio" name="p" id="p-priyainfo">
+<input type="radio" name="p" id="p-priyasent">
+<input type="radio" name="p" id="p-mom">
+<input type="radio" name="p" id="p-arjun">
+<input type="radio" name="p" id="p-ext">
+<input type="radio" name="p" id="p-pa">
+<input type="radio" name="p" id="p-pavoice">
+<input type="radio" name="p" id="p-pavoice2">
+<input type="radio" name="p" id="p-panew">
+<input type="radio" name="p" id="p-panotif">
+<input type="radio" name="p" id="p-rem">
+<input type="radio" name="p" id="p-sch">
+<input type="radio" name="p" id="p-schnew">
+<input type="radio" name="p" id="p-mem">
+<input type="radio" name="p" id="p-set">
+<!-- Sub state -->
+<input type="radio" name="c" id="c-all" checked><input type="radio" name="c" id="c-fr"><input type="radio" name="c" id="c-pro"><input type="radio" name="c" id="c-fam"><input type="radio" name="c" id="c-rel"><input type="radio" name="c" id="c-ext">
+<input type="radio" name="o" id="o-smart" checked><input type="radio" name="o" id="o-recent">
+<input type="radio" name="s" id="s-0" checked><input type="radio" name="s" id="s-1"><input type="radio" name="s" id="s-2"><input type="radio" name="s" id="s-3"><input type="radio" name="s" id="s-4"><input type="radio" name="s" id="s-5"><input type="radio" name="s" id="s-6"><input type="radio" name="s" id="s-7"><input type="radio" name="s" id="s-8"><input type="radio" name="s" id="s-9">
+<input type="radio" name="rt" id="rt-up" checked><input type="radio" name="rt" id="rt-sn"><input type="radio" name="rt" id="rt-done">
+<input type="radio" name="rd" id="rd-1" checked><input type="radio" name="rd" id="rd-2"><input type="radio" name="rd" id="rd-3"><input type="radio" name="rd" id="rd-4"><input type="radio" name="rd" id="rd-5">
+<input type="radio" name="t" id="t-today" checked><input type="radio" name="t" id="t-up"><input type="radio" name="t" id="t-done">
+<input type="radio" name="sc" id="sc-act" checked><input type="radio" name="sc" id="sc-hist">
+<input type="radio" name="r" id="r-once"><input type="radio" name="r" id="r-daily"><input type="radio" name="r" id="r-weekly" checked><input type="radio" name="r" id="r-custom">
+<input type="radio" name="mt" id="mt-ppl" checked><input type="radio" name="mt" id="mt-rules">
+<input type="radio" name="mp" id="mp-priya" checked><input type="radio" name="mp" id="mp-mom"><input type="radio" name="mp" id="mp-ravi">
+<input type="checkbox" id="x-task"><input type="checkbox" id="x-voice"><input type="checkbox" id="x-manual"><input type="checkbox" id="x-sch"><input type="checkbox" id="x-pause"><input type="checkbox" id="x-notes">
+
+<div class="app">
+
+  <div class="strip">
+    <b>Smart Messenger · v2</b><span style="color:#aaa">Clickable wireframe · solid = real data · dashed ✦ = AI generated</span>
+    <span class="sp"></span>
+    <label for="x-notes">Assumptions</label>
+    <label for="p-chats">Chats</label>
+    <label for="p-onb">↺ Restart</label>
+  </div>
+
+  <!-- ================= ONBOARDING ================= -->
+  <section class="pg-onb">
+    <div class="onb">
+      <div style="flex:1">
+        <div class="logo">S</div>
+        <h1 style="font-size:32px;margin:18px 0 8px">Smart Messenger</h1>
+        <p style="font-size:15px;color:#555;line-height:1.6;margin:0 0 20px">A messenger that learns who matters to you, helps you reply, remembers what you promised, and keeps in touch on your behalf, only in the ways you allow.</p>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:14px">
+          <div>▣ &nbsp;Chats ranked by how <i>you</i> read and spend time</div>
+          <div>▤ &nbsp;Contacts grouped: Friends, Professional, Family, Relatives, External</div>
+          <div>✦ &nbsp;Reply suggestions from memory and a chat summary</div>
+          <div>◉ &nbsp;Personal assistant: type or speak your tasks</div>
+          <div>◷ &nbsp;Schedule one-time and recurring messages</div>
+          <div>◈ &nbsp;Memory you can see, edit and delete</div>
+        </div>
+      </div>
+      <div class="card" style="width:440px;padding:22px">
+        <b style="font-size:16px">Permissions</b>
+        <p class="note" style="margin:4px 0 6px">Change these anytime in Settings.</p>
+        <label class="set"><span class="tx"><b>Learn from my reading behaviour</b><span>Delivered vs read time and time spent per chat. Stays on this device. No message content.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+        <label class="set"><span class="tx"><b>AI assist (optional)</b><span>Opens only when you tap ✦ AI assist, in chats you allow.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+        <label class="set"><span class="tx"><b>Microphone for voice tasks</b><span>Speech is turned into text. Audio is not stored.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+        <label class="set"><span class="tx"><b>Suggest memories</b><span>Nothing is saved without your OK.</span></span><input type="checkbox" class="lc"><span class="tog"></span></label>
+        <div class="set" style="border:0"><div class="tx"><b>AI never sends on its own</b><span>Only messages you write or approve are sent.</span></div><span class="tag solid">Always</span></div>
+        <label for="p-chats" class="btn pri lg" style="display:block;text-align:center;margin-top:12px">Get Started →</label>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell">
+
+    <nav class="rail">
+      <label for="p-chats" class="i nv-chats"><span class="g">▣</span>Chats<span class="cnt">7</span></label>
+      <label for="p-pa" class="i nv-pa"><span class="g">◉</span>Assistant</label>
+      <label for="p-rem" class="i nv-rem"><span class="g">⏰&#xFE0E;</span>Reminders<span class="cnt">3</span></label>
+      <label for="p-sch" class="i nv-sch"><span class="g">◷</span>Scheduled</label>
+      <label for="p-mem" class="i nv-mem"><span class="g">◈</span>Memory</label>
+      <div class="fill"></div>
+      <label for="p-set" class="i nv-set"><span class="g">⚙&#xFE0E;</span>Settings</label>
+      <div class="me">UK</div>
+    </nav>
+
+    <!-- ===================== CHATS LIST ===================== -->
+    <aside class="list lp ls-chats">
+      <div class="list-h"><b>Chats</b>
+        <span class="seg"><label for="o-smart">Smart</label><label for="o-recent">Recent</label></span></div>
+      <div class="search">⌕ &nbsp;Search or start a new chat</div>
+      <div class="chips">
+        <label for="c-all" class="chip">All <span class="n">7</span></label>
+        <label for="c-fr" class="chip">Friends <span class="n">1</span></label>
+        <label for="c-pro" class="chip">Professional <span class="n">2</span></label>
+        <label for="c-fam" class="chip">Family <span class="n">2</span></label>
+        <label for="c-rel" class="chip">Relatives <span class="n">1</span></label>
+        <label for="c-ext" class="chip">External <span class="n">1</span></label>
+      </div>
+      <div class="clist">
+        <div class="it gh k-fr k-pro k-fam k-rel k-ext" style="--s:0;--r:0"><span>Unread · <span class="cn cn-all">7</span><span class="cn cn-fr">1</span><span class="cn cn-pro">2</span><span class="cn cn-fam">2</span><span class="cn cn-rel">1</span><span class="cn cn-ext">1</span></span><span>ranked by habit</span></div>
+
+        <label for="p-priya" class="it row k-pro c-priya" style="--s:1;--r:3"><span class="av">PS</span><span class="meta"><span class="top"><span>Priya Sharma</span><span class="time u">10:42</span></span><span class="sub"><span class="t">Can you send the report by 4 PM?</span><span class="badge">2</span></span><span class="why"><span class="ktag tag">Professional</span>reads in 2 min · 20 min/day<b>87</b></span></span></label>
+        <label for="p-mom" class="it row k-fam c-mom" style="--s:2;--r:6"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time u">08:30</span></span><span class="sub"><span class="t">Call me when you’re free ♡</span><span class="badge">1</span></span><span class="why"><span class="ktag tag">Family</span>reads in 4 min · 22 min/day<b>86</b></span></span></label>
+        <div class="it row k-pro" style="--s:3;--r:5"><span class="av">PT</span><span class="meta"><span class="top"><span>Product Team</span><span class="time u">09:15</span></span><span class="sub"><span class="t">Ravi: Meeting tomorrow 11 AM</span><span class="badge">5</span></span><span class="why"><span class="ktag tag">Professional</span>group · reads in 9 min · 14 min/day<b>59</b></span></span></div>
+        <div class="it row k-fam" style="--s:4;--r:7"><span class="av">KR</span><span class="meta"><span class="top"><span>Kiran (Brother)</span><span class="time u">08:02</span></span><span class="sub"><span class="t">Did you book the train tickets?</span><span class="badge">1</span></span><span class="why"><span class="ktag tag">Family</span>reads in 12 min · 9 min/day<b>43</b></span></span></div>
+        <label for="p-arjun" class="it row k-fr c-arjun" style="--s:5;--r:10"><span class="av">AK</span><span class="meta"><span class="top"><span>Arjun</span><span class="time u">Yesterday</span></span><span class="sub"><span class="t">Are we meeting this weekend?</span><span class="badge">1</span></span><span class="why"><span class="ktag tag">Friends</span>reads in 40 min · 6 min/day<b>24</b></span></span></label>
+        <div class="it row k-rel" style="--s:6;--r:9"><span class="av">LA</span><span class="meta"><span class="top"><span>Lakshmi Aunty</span><span class="time u">Yesterday</span></span><span class="sub"><span class="t">Forwarded: Diwali greetings 🪔</span><span class="badge">3</span></span><span class="why"><span class="ktag tag">Relatives</span>reads in 3 h · 2 min/day<b>07</b></span></span></div>
+        <label for="p-ext" class="it row k-ext c-ext" style="--s:7;--r:1"><span class="av q">?</span><span class="meta"><span class="top"><span>+91 98765 43210</span><span class="time u">11:20</span></span><span class="sub"><span class="t">Hi, is this Uday? Calling about plots…</span><span class="badge">1</span></span><span class="why"><span class="ktag tag">External</span>not in contacts · no history yet<b>—</b></span></span></label>
+
+        <div class="it gh k-fr k-pro k-fam k-rel k-ext" style="--s:10;--r:0"><span>Read · <span class="cn cn-all">5</span><span class="cn cn-fr">1</span><span class="cn cn-pro">1</span><span class="cn cn-fam">1</span><span class="cn cn-rel">1</span><span class="cn cn-ext">1</span></span></div>
+        <div class="it row read k-fam" style="--s:11;--r:8"><span class="av">DA</span><span class="meta"><span class="top"><span>Dad</span><span class="time">Yesterday</span></span><span class="sub"><span class="t">Ok 👍</span></span><span class="why"><span class="ktag tag">Family</span>reads in 6 min · 11 min/day<b>56</b></span></span></div>
+        <div class="it row read k-pro" style="--s:12;--r:4"><span class="av">RV</span><span class="meta"><span class="top"><span>Ravi Kumar</span><span class="time">10:10</span></span><span class="sub"><span class="t">You: Will share the deck by EOD</span></span><span class="why"><span class="ktag tag">Professional</span>reads in 8 min · 10 min/day<b>51</b></span></span></div>
+        <div class="it row read k-fr" style="--s:13;--r:11"><span class="av">SN</span><span class="meta"><span class="top"><span>Sneha</span><span class="time">Mon</span></span><span class="sub"><span class="t">Haha see you at the gym</span></span><span class="why"><span class="ktag tag">Friends</span>reads in 1 h · 4 min/day<b>16</b></span></span></div>
+        <div class="it row read k-rel" style="--s:14;--r:12"><span class="av">RU</span><span class="meta"><span class="top"><span>Raju Uncle</span><span class="time">Sun</span></span><span class="sub"><span class="t">God bless 🙏</span></span><span class="why"><span class="ktag tag">Relatives</span>reads in 5 h · 1 min/day<b>04</b></span></span></div>
+        <div class="it row read dim k-ext" style="--s:15;--r:2"><span class="av">SD</span><span class="meta"><span class="top"><span>ShopDeals</span><span class="time">11:05</span></span><span class="sub"><span class="t">Get 50% off today only!</span></span><span class="why"><span class="ktag tag">External</span>reads in 9 h · 0 min/day<b>01</b></span></span></div>
+      </div>
+      <div class="foot only-smart">Smart order: unread first, then by your habit score (0–100). Computed on this device. No AI.</div>
+      <div class="foot only-recent">Recent order: newest message first. Notice the unknown number and promo jump to the top.</div>
+    </aside>
+
+    <!-- ===================== CHATS HOME (no chat open) ===================== -->
+    <main class="main mp mn-home">
+      <div class="pad">
+        <div class="h2">Why your chats are in this order</div>
+        <div class="note" style="margin-bottom:14px">Feature 1 · behaviour-based ranking · last 14 days · no LLM</div>
+        <div class="grid2" style="grid-template-columns:1.4fr 1fr;align-items:start">
+          <div class="card">
+            <table class="sc">
+              <tr><th>#</th><th>Contact</th><th>Avg read delay</th><th>Avg time / day</th><th>Score</th></tr>
+              <tr><td>1</td><td><b>Priya Sharma</b></td><td class="num">2 min</td><td class="num">20 min</td><td class="num"><b>87</b></td></tr>
+              <tr><td>2</td><td><b>Mom</b></td><td class="num">4 min</td><td class="num">22 min</td><td class="num"><b>86</b></td></tr>
+              <tr><td>3</td><td>Product Team</td><td class="num">9 min</td><td class="num">14 min</td><td class="num">59</td></tr>
+              <tr><td>4</td><td>Dad</td><td class="num">6 min</td><td class="num">11 min</td><td class="num">56</td></tr>
+              <tr><td>5</td><td>Ravi Kumar</td><td class="num">8 min</td><td class="num">10 min</td><td class="num">51</td></tr>
+              <tr><td>6</td><td>Kiran (Brother)</td><td class="num">12 min</td><td class="num">9 min</td><td class="num">43</td></tr>
+              <tr><td>7</td><td>Arjun</td><td class="num">40 min</td><td class="num">6 min</td><td class="num">24</td></tr>
+              <tr><td>…</td><td style="color:#888">ShopDeals</td><td class="num" style="color:#888">9 h</td><td class="num" style="color:#888">0 min</td><td class="num" style="color:#888">01</td></tr>
+            </table>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card">
+              <b style="font-size:13.5px">How the score works</b>
+              <div class="formula" style="margin-top:8px">
+                read_delay = read_at − delivered_at<br>
+                read_speed = 1 ÷ (1 + avg_delay_min ÷ 10)<br>
+                time_score = min(avg_min_per_day ÷ 22, 1)<br>
+                score = 100 × (0.5·read_speed + 0.5·time_score)
+              </div>
+              <div class="note" style="margin-top:8px">22 min = your most-used chat. New contacts show “—” until 5 messages are tracked.</div>
+            </div>
+            <div class="card">
+              <b style="font-size:13.5px">Example: Priya</b>
+              <div class="note" style="margin-top:6px;color:#333">read_speed = 1 ÷ (1 + 0.2) = 0.83<br>time_score = 20 ÷ 22 = 0.91<br>score = 100 × (0.415 + 0.455) = <b>87</b></div>
+            </div>
+            <label for="p-priya" class="btn pri" style="text-align:center">Open Priya’s chat →</label>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===================== PRIYA CHAT ===================== -->
+    <main class="main mp mn-priya">
+      <input type="checkbox" id="as-pri" class="hid as-t">
+      <div class="ch"><span class="av sm">PS</span>
+        <label for="p-priyainfo"><div class="n">Priya Sharma <span class="tag">Professional</span></div><div class="s">Project Manager · AI assist allowed · tap for info</div></label>
+        <div class="r"><label for="p-priyainfo" class="btn">ⓘ Contact info</label></div></div>
+      <div class="msgs">
+        <span class="day">Today</span>
+        <div class="b">Morning! How’s the Q3 report coming along?<small>10:38</small></div>
+        <div class="b out">Almost done, just reviewing the numbers.<small>10:40 ✓✓</small></div>
+        <div class="b">Great. Can you send the report by 4 PM? Leadership review is at 5.<small>10:42</small></div>
+        <div class="b out only-sent"><span class="sv sb-0">Sure Priya, I’ll send it by 4 PM.</span><span class="sv sb-1">Sure Priya, I’ll send the Q3 report by 4 PM today.</span><span class="sv sb-2">Hi Priya, the numbers are final and I’m just formatting the slides. I’ll share the Q3 report before 4 PM, ahead of the 5 PM leadership review.</span><span class="sv sb-3">On it, Priya! You’ll have the report before 4 PM.</span><span class="sv sb-4">Hi Priya, could I send it by 4:30 PM? I’m still checking a few numbers.</span><span class="sv sb-5">Hi Priya, the regional figures need one more check. Could I send the report by 4:30 PM? That still leaves 30 minutes before the 5 PM review.</span><span class="sv sb-6">Almost there, Priya! Could I have until 4:30 to double-check the numbers?</span><span class="sv sb-7">Sure, I’ll send it by 4 PM with a regional breakdown slide added.</span><span class="sv sb-8">Hi Priya, I’ll share the Q3 report by 4 PM. I’ve also added a regional breakdown slide in case leadership asks about it at 5.</span><span class="sv sb-9">Will do! By 4 PM, plus a regional breakdown slide.</span><small>10:45 ✓</small></div>
+        <div class="sys only-sent"><span>✦ You promised to send the report.</span><span class="no-task">Add a reminder?</span><label for="x-task" class="btn pri no-task">+ Add task · Today 4:00 PM</label><span class="tag solid if-task">✓ Added · reminder at 3:30 PM</span><label for="p-rem" class="btn if-task">View reminder</label></div>
+      </div>
+
+      <!-- AI assist panel: hidden until the user taps "✦ AI assist" in the composer -->
+      <div class="sugg as-box">
+        <input type="checkbox" id="go-pri" class="hid go-t">
+        <input type="radio" name="inp" id="in-1" class="hid in1" checked>
+        <input type="radio" name="inp" id="in-2" class="hid in2">
+        <input type="radio" name="inp" id="in-3" class="hid in3">
+
+        <!-- Step 1: ask the user what they want to say -->
+        <div class="go-ask">
+          <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i class="on">1</i>What do you want to say? <i>2</i>Pick a reply</span><label for="as-pri" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+          <div class="lb" style="margin-top:10px">Quick goals</div>
+          <div class="chips" style="padding:0"><label for="in-1" class="chip ch1">✓ Confirm 4 PM</label><label for="in-2" class="chip ch2">⏱ Ask for more time</label><label for="in-3" class="chip ch3">✎ Something else…</label></div>
+          <div class="lb" style="margin-top:10px">Your context · click to type</div>
+          <div class="v goalbox x1" contenteditable="true">The numbers are final, I’m just formatting the slides.</div>
+          <div class="v goalbox x2" contenteditable="true">Regional figures need one more check. Ask if 4:30 PM is OK.</div>
+          <div class="v goalbox x3" contenteditable="true">Say I’ll send it on time and I’m also adding a regional breakdown slide.</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+            <label for="go-pri" class="btn pri">✦ Suggest replies</label>
+            <span class="note" style="flex:1">The AI also uses Priya’s memory, your rules and a short chat summary. Your context is used for this reply only and is not saved.</span>
+          </div>
+        </div>
+
+        <!-- Step 2: replies tailored to the user's context -->
+        <div class="go-res">
+          <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i>1</i>Context <i class="on">2</i>Pick a reply · it goes into the message box, you still press send</span><label for="as-pri" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+          <div class="goalbar"><b>Your goal:</b><span style="flex:1"><span class="x1">Confirm 4 PM · “numbers are final, formatting slides”</span><span class="x2">Ask for more time · “regional figures need a check, 4:30 PM?”</span><span class="x3">“Send on time, also adding a regional breakdown slide”</span></span><label for="go-pri" class="btn ghost">✎ Change</label><span class="btn ghost">↻ Regenerate</span></div>
+          <div class="sgrid x1">
+            <label for="s-1" class="sopt"><i>Short</i>Sure Priya, I’ll send the Q3 report by 4 PM today.</label>
+            <label for="s-2" class="sopt"><i>Detailed</i>Hi Priya, the numbers are final and I’m just formatting the slides. I’ll share the Q3 report before 4 PM, ahead of the 5 PM leadership review.</label>
+            <label for="s-3" class="sopt"><i>Friendly</i>On it, Priya! You’ll have the report before 4 PM.</label>
+          </div>
+          <div class="sgrid x2">
+            <label for="s-4" class="sopt"><i>Short</i>Hi Priya, could I send it by 4:30 PM? I’m still checking a few numbers.</label>
+            <label for="s-5" class="sopt"><i>Detailed</i>Hi Priya, the regional figures need one more check. Could I send the report by 4:30 PM? That still leaves 30 minutes before the 5 PM review.</label>
+            <label for="s-6" class="sopt"><i>Friendly</i>Almost there, Priya! Could I have until 4:30 to double-check the numbers?</label>
+          </div>
+          <div class="sgrid x3">
+            <label for="s-7" class="sopt"><i>Short</i>Sure, I’ll send it by 4 PM with a regional breakdown slide added.</label>
+            <label for="s-8" class="sopt"><i>Detailed</i>Hi Priya, I’ll share the Q3 report by 4 PM. I’ve also added a regional breakdown slide in case leadership asks about it at 5.</label>
+            <label for="s-9" class="sopt"><i>Friendly</i>Will do! By 4 PM, plus a regional breakdown slide.</label>
+          </div>
+          <div class="ctx">
+            <input type="checkbox" id="ctx1" class="lc ctx-t">
+            <label for="ctx1" class="note" style="text-decoration:underline">Context sent to AI for this suggestion ▾</label>
+            <div class="ctxb" style="grid-template-columns:repeat(4,1fr)">
+              <div><b>Your context (this reply)</b><span class="x1">Confirm 4 PM. Numbers final, formatting slides.</span><span class="x2">Ask for 4:30 PM. Regional figures need a check.</span><span class="x3">On time, plus a regional breakdown slide.</span></div>
+              <div><b>Memory · Priya</b>Project Manager. Prefers short, clear updates. Leadership review Tuesdays 5 PM.</div>
+              <div><b>Memory · My rules</b>Professional tone with Professional contacts. No emojis with managers.</div>
+              <div><b>Chat summary (auto)</b>Priya is waiting on the Q3 report. Uday said it’s almost done. She needs it by 4 PM today.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner pre-sent" style="padding:7px 12px"><span class="tag">✦ Task found</span><span style="flex:1">Send Q3 report to Priya · <b>Today 4:00 PM</b></span><label for="x-task" class="btn no-task">+ Add task &amp; reminder</label><span class="tag solid if-task">✓ Added · reminder 3:30 PM</span></div>
+      <div class="composer">☺ ＋<div class="input"><span class="sv sv-0">Type a message, or tap ✦ AI assist for help</span><span class="sv sv-1 filled">Sure Priya, I’ll send the Q3 report by 4 PM today.</span><span class="sv sv-2 filled">Hi Priya, the numbers are final and I’m just formatting the slides. I’ll share the Q3 report before 4 PM…</span><span class="sv sv-3 filled">On it, Priya! You’ll have the report before 4 PM.</span><span class="sv sv-4 filled">Hi Priya, could I send it by 4:30 PM? I’m still checking a few numbers.</span><span class="sv sv-5 filled">Hi Priya, the regional figures need one more check. Could I send the report by 4:30 PM?…</span><span class="sv sv-6 filled">Almost there, Priya! Could I have until 4:30 to double-check the numbers?</span><span class="sv sv-7 filled">Sure, I’ll send it by 4 PM with a regional breakdown slide added.</span><span class="sv sv-8 filled">Hi Priya, I’ll share the Q3 report by 4 PM. I’ve also added a regional breakdown slide…</span><span class="sv sv-9 filled">Will do! By 4 PM, plus a regional breakdown slide.</span></div><label for="as-pri" class="aib">✦ AI assist</label><label for="p-schnew" title="Schedule">◷</label><label for="p-priyasent" class="send">➤</label></div>
+    </main>
+
+    <!-- Priya contact info drawer -->
+    <aside class="drawer dr dr-info">
+      <div class="dh">Contact info<label for="p-priya" class="x">✕</label></div>
+      <div class="sec" style="text-align:center"><div class="av" style="width:72px;height:72px;margin:0 auto 8px;font-size:22px">PS</div><b>Priya Sharma</b><div class="src">+91 90000 12345 · Project Manager</div></div>
+      <div class="sec"><h4>Category</h4>
+        <div class="chips" style="padding:0"><span class="chip">Friends</span><span class="chip" style="background:#111;color:#fff;border-color:#111">Professional ✓</span><span class="chip">Family</span><span class="chip">Relatives</span></div>
+        <div class="note" style="margin-top:6px">One category per contact. You can change it anytime.</div></div>
+      <div class="sec"><h4>Your behaviour · last 14 days · on device</h4>
+        <div class="grid2" style="gap:8px;margin-bottom:10px">
+          <div class="card" style="padding:8px 10px"><div class="src">Avg read delay</div><b style="font-size:18px">2 min</b><div class="src">read speed 0.83</div></div>
+          <div class="card" style="padding:8px 10px"><div class="src">Avg time / day</div><b style="font-size:18px">20 min</b><div class="src">time score 0.91</div></div>
+        </div>
+        <div class="src" style="margin-bottom:4px">Minutes in this chat · last 7 days</div>
+        <div class="spark"><i style="height:60%"></i><i style="height:85%"></i><i style="height:70%"></i><i style="height:95%"></i><i style="height:40%"></i><i style="height:15%"></i><i style="height:90%"></i></div>
+        <div class="spark-l"><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span><span>M</span><span>T</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px"><span style="flex:1">Priority score</span><span class="tag solid">87 · #1</span></div>
+        <div class="acts" style="margin-top:8px"><span class="btn ghost">Reset behaviour data</span></div></div>
+      <label class="sec set" style="padding:13px 18px"><span class="tx"><b>AI suggestions in this chat</b><span>Reads this chat to suggest replies</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+      <div class="sec"><h4>Memory about Priya · 3</h4>
+        <div class="note" style="color:#333">• Project Manager<br>• Prefers short, clear updates<br>• Leadership review Tuesdays 5 PM</div>
+        <label for="p-mem" class="btn" style="margin-top:8px">Open in Memory →</label></div>
+      <div class="sec" style="border:0"><h4>Scheduled to Priya</h4><div class="note">None</div><label for="p-schnew" class="btn" style="margin-top:6px">+ Schedule a message</label></div>
+    </aside>
+
+    <!-- ===================== MOM CHAT ===================== -->
+    <main class="main mp mn-mom">
+      <input type="checkbox" id="as-mom" class="hid as-t">
+      <div class="ch"><span class="av sm">MO</span><div><div class="n">Mom <span class="tag">Family</span></div><div class="s">Score 86 · reads in 4 min · 22 min/day · AI assist not allowed yet</div></div></div>
+      <div class="msgs">
+        <span class="day">Today</span>
+        <div class="b out">Good morning Amma ☀️<small>07:00 ✓✓ · ◷ scheduled</small></div>
+        <div class="b">Good morning kanna. Did you eat?<small>07:20</small></div>
+        <div class="b">Call me when you’re free ♡<small>08:30</small></div>
+      </div>
+      <div class="as-box" style="flex:none">
+        <input type="checkbox" id="ai-mom" class="hid ai-t">
+        <div class="banner ai-off">⛉ <span style="flex:1"><b>AI assist needs permission for this chat.</b><br><span class="note">Until you allow it, nothing from Mom’s chat is sent to the AI.</span></span><label for="ai-mom" class="btn pri">Allow for this chat</label><label for="as-mom" class="btn ghost">Not now</label></div>
+        <div class="sugg ai-on">
+          <input type="checkbox" id="go-mom" class="hid go-t">
+          <div class="go-ask">
+            <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i class="on">1</i>What do you want to say? <i>2</i>Pick a reply</span><label for="as-mom" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+            <div class="lb" style="margin-top:10px">Quick goals</div>
+            <div class="chips" style="padding:0"><span class="chip on">☎ Say I’ll call tonight</span><span class="chip">🍽 Tell her I ate</span><span class="chip">✎ Something else…</span></div>
+            <div class="lb" style="margin-top:10px">Your context · click to type</div>
+            <div class="v goalbox" contenteditable="true">I ate breakfast. Busy at office, will call at 8 PM.</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px"><label for="go-mom" class="btn pri">✦ Suggest replies</label><span class="note">Uses your rule “Reply in Telugu-English with family”.</span><label for="ai-mom" class="btn ghost" style="margin-left:auto">Revoke permission</label></div>
+          </div>
+          <div class="go-res">
+            <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i>1</i>Context <i class="on">2</i>Pick a reply</span><label for="as-mom" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+            <div class="goalbar"><b>Your goal:</b><span style="flex:1">“Ate breakfast, busy at office, call at 8 PM”</span><label for="go-mom" class="btn ghost">✎ Change</label><span class="btn ghost">↻ Regenerate</span></div>
+            <div class="sgrid">
+              <div class="sopt"><i>Short</i>Tinna Amma. Tonight 8 ki call chesta 🙂</div>
+              <div class="sopt"><i>Detailed</i>Breakfast ayindi Amma. Office lo busy ga undi, 8 PM ki call chesta.</div>
+              <div class="sopt"><i>Friendly</i>Ha Amma, tinna! Evening 8 ki pakka call chesta ❤️</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="banner">◷ <span style="flex:1">Scheduled: “Good morning Amma ☀️” · every day 7:00 AM</span><label for="p-sch" class="btn">Manage</label></div>
+      <div class="composer">☺ ＋<div class="input">Type a message, or tap ✦ AI assist for help</div><label for="as-mom" class="aib">✦ AI assist</label><label for="p-schnew">◷</label><span class="send">➤</span></div>
+    </main>
+
+    <!-- ===================== ARJUN CHAT ===================== -->
+    <main class="main mp mn-arjun">
+      <input type="checkbox" id="as-arj" class="hid as-t">
+      <div class="ch"><span class="av sm">AK</span><div><div class="n">Arjun <span class="tag">Friends</span></div><div class="s">Score 24 · reads in 40 min · 6 min/day</div></div></div>
+      <div class="msgs">
+        <span class="day">Saturday</span>
+        <div class="b out">That movie was too good 😂<small>23:10 ✓✓</small></div>
+        <span class="day">Yesterday</span>
+        <div class="b">Bro, are we meeting this weekend?<small>21:14</small></div>
+      </div>
+      <div class="sugg as-box">
+        <input type="checkbox" id="go-arj" class="hid go-t">
+        <div class="go-ask">
+          <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i class="on">1</i>What do you want to say? <i>2</i>Pick a reply</span><label for="as-arj" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+          <div class="lb" style="margin-top:10px">Quick goals</div>
+          <div class="chips" style="padding:0"><span class="chip on">✓ Yes, let’s meet</span><span class="chip">✕ Can’t this weekend</span><span class="chip">? Suggest a plan</span><span class="chip">✎ Something else…</span></div>
+          <div class="lb" style="margin-top:10px">Your context · click to type</div>
+          <div class="v goalbox" contenteditable="true">Yes, Saturday evening. Ask if the usual café at 6 works.</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px"><label for="go-arj" class="btn pri">✦ Suggest replies</label><span class="note">Also uses memory: “Arjun · college friend · plays cricket Sundays”.</span></div>
+        </div>
+        <div class="go-res">
+          <div style="display:flex;align-items:center;gap:10px"><span class="ai">AI assist</span><span class="steps"><i>1</i>Context <i class="on">2</i>Pick a reply</span><label for="as-arj" class="btn ghost" style="margin-left:auto">✕ Close</label></div>
+          <div class="goalbar"><b>Your goal:</b><span style="flex:1">“Yes, Saturday evening, usual café at 6?”</span><label for="go-arj" class="btn ghost">✎ Change</label><span class="btn ghost">↻ Regenerate</span></div>
+          <div class="sgrid">
+            <div class="sopt"><i>Short</i>Yes! Saturday 6 at the usual café?</div>
+            <div class="sopt"><i>Detailed</i>Yes bro, Saturday evening works. Sunday you have cricket right? Same café at 6?</div>
+            <div class="sopt"><i>Friendly</i>Obviously 😎 Saturday, same place, 6 PM?</div>
+          </div>
+        </div>
+      </div>
+      <div class="banner" style="padding:7px 12px"><span class="tag">✦ Task found</span><span style="flex:1">Meet Arjun · <b>Sat 31 Oct, 6:00 PM</b> (if you confirm)</span><span class="btn">+ Add task &amp; reminder</span></div>
+      <div class="composer">☺ ＋<div class="input">Type a message, or tap ✦ AI assist for help</div><label for="as-arj" class="aib">✦ AI assist</label><label for="p-schnew">◷</label><span class="send">➤</span></div>
+    </main>
+
+    <!-- ===================== EXTERNAL CHAT ===================== -->
+    <main class="main mp mn-ext">
+      <div class="ch"><span class="av sm q">?</span><div><div class="n">+91 98765 43210 <span class="tag">External</span></div><div class="s">Not in your contacts</div></div></div>
+      <div class="msgs">
+        <span class="day">Today</span>
+        <div class="b">Hi, is this Uday? I’m calling from XYZ Realty about plots near the airport. Very good offer.<small>11:20</small></div>
+      </div>
+      <div class="banner" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;gap:10px;align-items:center"><b style="flex:1">Unknown number</b><span class="tag">AI off by default</span><span class="tag">No ranking yet</span></div>
+        <div class="note">Save this contact and choose a category, or keep it in External.</div>
+        <div class="acts"><span class="chip">Friends</span><span class="chip">Professional</span><span class="chip">Family</span><span class="chip">Relatives</span><span style="flex:1"></span><span class="btn">Save contact</span><span class="btn ghost">Block</span><span class="btn ghost">Report</span></div>
+      </div>
+      <div class="composer">☺ ＋<div class="input">Type a message</div><span class="send">➤</span></div>
+    </main>
+
+    <!-- ===================== ASSISTANT (PA) ===================== -->
+    <aside class="list lp ls-pa">
+      <div class="list-h"><b>Assistant</b><span class="note">Your PA</span></div>
+      <div style="display:flex;gap:8px;padding:0 16px 12px">
+        <label for="p-panew" class="btn" style="flex:1;text-align:center;padding:10px">✎ Type a task</label>
+        <label for="p-pavoice" class="btn pri" style="flex:1;text-align:center;padding:10px">🎙&#xFE0E; Speak a task</label>
+      </div>
+      <div class="chips"><label for="t-today" class="chip">Today</label><label for="t-up" class="chip">Upcoming</label><label for="t-done" class="chip">Completed</label></div>
+
+      <div class="tk tt-today tt-up card ai-card no-task" style="margin:4px 14px 8px;padding:10px 12px"><span class="ai">Suggested from chats</span><div style="font-size:13.5px;font-weight:600;margin-top:4px">Send Q3 report to Priya</div><div class="src">From Priya Sharma · “by 4 PM” · Today 4:00 PM</div><div class="acts" style="margin-top:8px"><label for="x-task" class="btn pri">Add</label><span class="btn ghost">Ignore</span></div></div>
+
+      <label class="tk tt-today row if-task"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Send Q3 report to Priya</span><span class="time u">4:00 PM</span></span><span class="why"><span class="tag">From chat</span>Priya Sharma</span></span></label>
+      <label class="tk tt-today row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Pick up medicines for Dad</span><span class="time">6:30 PM</span></span><span class="why"><span class="tag">Voice</span>Apollo Pharmacy</span></span></label>
+      <label class="tk tt-today row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Submit timesheet</span><span class="time">7:00 PM</span></span><span class="why"><span class="tag">Manual</span>↻ every Tuesday</span></span></label>
+      <label class="tk tt-today row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Renew gym membership</span><span class="time">Anytime</span></span><span class="why"><span class="tag">Manual</span>no date</span></span></label>
+
+      <label class="tk tt-up row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Bring launch copy to meeting</span><span class="time">Wed 11 AM</span></span><span class="why"><span class="tag">From chat</span>Product Team</span></span></label>
+      <label class="tk tt-up row if-voice"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Call the bank about loan papers</span><span class="time">Fri 11 AM</span></span><span class="why"><span class="tag">Voice</span>just added</span></span></label>
+      <label class="tk tt-up row if-manual"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Book flight to Hyderabad</span><span class="time">Sat 10 AM</span></span><span class="why"><span class="tag">Manual</span>just added</span></span></label>
+      <label class="tk tt-up row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Submit final report</span><span class="time">Fri 6 PM</span></span><span class="why"><span class="tag">From chat</span>Ravi Kumar</span></span></label>
+      <label class="tk tt-up row"><input type="checkbox" class="lc"><span class="chk"></span><span class="meta"><span class="top"><span>Arjun’s birthday gift</span><span class="time">Mar 11</span></span><span class="why"><span class="tag">Manual</span>linked to Arjun</span></span></label>
+
+      <label class="tk tt-done row"><input type="checkbox" class="lc" checked><span class="chk"></span><span class="meta"><span class="top"><span>Team standup</span><span class="time">9:00 AM</span></span><span class="why"><span class="tag">Manual</span>↻ weekdays</span></span></label>
+      <label class="tk tt-done row"><input type="checkbox" class="lc" checked><span class="chk"></span><span class="meta"><span class="top"><span>Share mockups with Neha</span><span class="time">Mon</span></span><span class="why"><span class="tag">From chat</span>Product Team</span></span></label>
+      <div class="foot">Tasks come from 3 places: typed, spoken, or suggested from chats. Every task needs your OK.</div>
+    </aside>
+
+    <main class="main mp mn-pa">
+      <div class="ch"><div><div class="n">Today · Tuesday, 27 Oct</div><div class="s">4 tasks · next at 4:00 PM</div></div>
+        <div class="r"><label for="p-panotif" class="btn">▶ Preview 3:30 PM alert</label></div></div>
+      <div class="pad">
+        <div class="banner if-voice" style="margin:0 0 12px">✓ <span style="flex:1">Saved by voice: <b>Call the bank about loan papers</b> · Fri 11:00 AM</span><label for="t-up" class="btn">See in Upcoming</label></div>
+        <div class="banner if-manual" style="margin:0 0 12px">✓ <span style="flex:1">Saved: <b>Book flight to Hyderabad</b> · Sat 10:00 AM</span><label for="t-up" class="btn">See in Upcoming</label></div>
+        <div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <b style="font-size:14px">Timeline</b>
+            <div class="tl" style="margin-top:6px">
+              <div class="e done"><span class="hr">9:00 AM</span><span class="d"></span><span style="flex:1">Team standup</span><span class="tag">Manual</span></div>
+              <div class="e now"><span class="hr">10:45 AM</span><span class="d" style="background:#111"></span><span style="flex:1">Now</span></div>
+              <div class="e if-task"><span class="hr">4:00 PM</span><span class="d"></span><span style="flex:1">Send Q3 report to Priya<div class="src">Reminder at 3:30 PM</div></span><span class="tag">From chat</span></div>
+              <div class="e"><span class="hr">6:30 PM</span><span class="d"></span><span style="flex:1">Pick up medicines for Dad</span><span class="tag">Voice</span></div>
+              <div class="e"><span class="hr">7:00 PM</span><span class="d"></span><span style="flex:1">Submit timesheet <span class="src">↻ weekly</span></span><span class="tag">Manual</span></div>
+              <div class="e" style="border:0"><span class="hr">Anytime</span><span class="d" style="border-style:dashed"></span><span style="flex:1">Renew gym membership</span><span class="tag">Manual</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card">
+              <b style="font-size:13.5px">Ask your PA</b>
+              <div class="note" style="margin:4px 0 10px">Say or type things like:</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
+                <div class="v">“Remind me to call the bank on Friday at 11 AM”</div>
+                <div class="v">“Every Tuesday 7 PM, submit timesheet”</div>
+                <div class="v">“What do I have tomorrow?”</div>
+              </div>
+              <label for="p-pavoice" class="btn pri" style="display:block;text-align:center;margin-top:10px">🎙&#xFE0E; Hold to speak</label>
+            </div>
+            <div class="card">
+              <b style="font-size:13.5px">How reminders reach you</b>
+              <div class="note" style="margin-top:4px">A notification 30 min before (change per task), with Done, Snooze and Open chat.</div>
+              <label for="p-rem" class="btn" style="margin-top:8px">Open Reminders →</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Voice step 1 -->
+    <div class="ov ov-voice">
+      <div class="modal" style="width:440px;text-align:center">
+        <div class="mh" style="justify-content:center">Listening…</div>
+        <div class="mb">
+          <div class="mic">🎙&#xFE0E;</div>
+          <div class="wave"><i style="height:8px"></i><i style="height:18px"></i><i style="height:28px"></i><i style="height:14px"></i><i style="height:24px"></i><i style="height:10px"></i><i style="height:22px"></i><i style="height:30px"></i><i style="height:12px"></i><i style="height:20px"></i><i style="height:8px"></i></div>
+          <div class="v" style="text-align:left;line-height:1.5;margin-top:10px">“Remind me to call the bank on Friday at 11 AM about the loan papers”</div>
+          <div class="src" style="margin-top:8px">Live transcript · audio is not saved</div>
+        </div>
+        <div class="mf" style="justify-content:center"><label for="p-pa" class="btn ghost lg">Cancel</label><label for="p-pavoice2" class="btn pri lg">Done</label></div>
+      </div>
+    </div>
+    <!-- Voice step 2 -->
+    <div class="ov ov-voice2">
+      <div class="modal">
+        <div class="mh"><span class="ai">Here’s what I understood</span></div>
+        <div class="mb">
+          <div class="src" style="margin-bottom:12px">You said: “Remind me to call the bank on Friday at 11 AM about the loan papers”</div>
+          <div class="field"><span class="lb">Task · click to edit</span><div class="v" contenteditable="true">Call the bank about loan papers</div></div>
+          <div class="grid2">
+            <div class="field"><span class="lb">Date</span><div class="v" contenteditable="true">Fri, 30 Oct 2026</div></div>
+            <div class="field"><span class="lb">Time</span><div class="v" contenteditable="true">11:00 AM</div></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><span class="lb">Repeat</span><div class="v">Does not repeat ▾</div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="v">30 min before ▾</div></div>
+          </div>
+          <div class="card" style="background:#f6f6f6;font-size:12.5px;line-height:1.5"><b>If something is unclear, the PA asks.</b><br>You: “Remind me to pay rent next week.”<br>PA: “Which day next week? <span class="tag">Mon</span> <span class="tag">Tue</span> <span class="tag">Wed</span> …”</div>
+        </div>
+        <div class="mf"><label for="p-pa" class="btn ghost lg">Cancel</label><label for="p-pavoice" class="btn">🎙&#xFE0E; Say again</label><label for="x-voice" class="btn pri lg">Save task</label></div>
+      </div>
+    </div>
+    <!-- Manual task -->
+    <div class="ov ov-panew">
+      <div class="modal">
+        <div class="mh">New task</div>
+        <div class="mb">
+          <div class="field"><span class="lb">Task · click to edit</span><div class="v" contenteditable="true">Book flight to Hyderabad</div></div>
+          <div class="grid2">
+            <div class="field"><span class="lb">Date</span><div class="v" contenteditable="true">Sat, 31 Oct 2026</div></div>
+            <div class="field"><span class="lb">Time</span><div class="v" contenteditable="true">10:00 AM</div></div>
+          </div>
+          <div class="field"><span class="lb">Repeat</span><div class="chips" style="padding:0"><span class="chip" style="background:#111;color:#fff;border-color:#111">Never</span><span class="chip">Daily</span><span class="chip">Weekly</span><span class="chip">Monthly</span><span class="chip">No date (to-do)</span></div></div>
+          <div class="grid2">
+            <div class="field"><span class="lb">Link to contact (optional)</span><div class="v">Kiran (Brother) ▾</div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="v">30 min before ▾</div></div>
+          </div>
+          <div class="field" style="margin:0"><span class="lb">Notes</span><div class="v" contenteditable="true" style="color:#888">Check Indigo and Air India fares</div></div>
+        </div>
+        <div class="mf"><label for="p-pa" class="btn ghost lg">Cancel</label><label for="x-manual" class="btn pri lg">Save task</label></div>
+      </div>
+    </div>
+    <!-- Reminder notification -->
+    <div class="toast">
+      <div style="display:flex;gap:10px;align-items:center"><span style="font-size:20px">⏰</span><div style="flex:1"><b>Reminder · due 4:00 PM</b><div style="font-size:12px;color:#bbb">Send Q3 report to Priya · from her chat</div></div><span style="font-size:11px;color:#999">3:30 PM</span></div>
+      <div class="acts"><label for="p-pa" class="btn pri">✓ Done</label><label for="p-pa" class="btn">Snooze 15 min</label><label for="p-priya" class="btn">Open chat</label></div>
+    </div>
+
+    <!-- ===================== REMINDERS ===================== -->
+    <aside class="list lp ls-rem">
+      <div class="list-h"><b>Reminders</b><span style="display:flex;gap:6px"><label for="p-pavoice" class="btn" title="Speak a reminder">◉ Speak</label><label for="p-panew" class="btn pri">+ New</label></span></div>
+      <div class="search">⌕ &nbsp;Search reminders</div>
+      <div class="chips"><label for="rt-up" class="chip">Upcoming</label><label for="rt-sn" class="chip">Snoozed <span class="n">1</span></label><label for="rt-done" class="chip">Done</label></div>
+
+      <div class="gh rr rt-up">Today · Tue 27 Oct<span>alert time</span></div>
+      <label for="rd-4" class="rr rt-up row rc-4 if-task"><span class="ric now">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Send Q3 report to Priya</span><span class="time u">3:30 PM</span></span><span class="sub"><span class="t">Due 4:00 PM · 30 min before</span></span><span class="why"><span class="tag">From chat</span>Priya Sharma</span></span></label>
+      <label for="rd-1" class="rr rt-up row rc-1"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Pick up medicines for Dad</span><span class="time u">6:00 PM</span></span><span class="sub"><span class="t">Due 6:30 PM · 30 min before</span></span><span class="why"><span class="tag">Voice</span>Apollo Pharmacy</span></span></label>
+      <label for="rd-2" class="rr rt-up row rc-2"><span class="ric">↻</span><span class="meta"><span class="top"><span>Submit timesheet</span><span class="time u">6:30 PM</span></span><span class="sub"><span class="t">Due 7:00 PM · every Tuesday</span></span><span class="why"><span class="tag">Manual</span>repeats weekly</span></span></label>
+      <div class="gh rr rt-up">Tomorrow · Wed 28 Oct</div>
+      <div class="rr rt-up row"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Bring launch copy to meeting</span><span class="time">10:30 AM</span></span><span class="sub"><span class="t">Due 11:00 AM</span></span><span class="why"><span class="tag">From chat</span>Product Team</span></span></div>
+      <div class="gh rr rt-up">This week</div>
+      <label for="rd-3" class="rr rt-up row rc-3 if-voice"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Call the bank about loan papers</span><span class="time">Fri 10:30</span></span><span class="sub"><span class="t">Due Fri 11:00 AM · just added</span></span><span class="why"><span class="tag">Voice</span></span></span></label>
+      <div class="rr rt-up row"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Submit final report</span><span class="time">Fri 5:00</span></span><span class="sub"><span class="t">Due Fri 6:00 PM · 1 hour before</span></span><span class="why"><span class="tag">From chat</span>Ravi Kumar</span></span></div>
+      <div class="rr rt-up row if-manual"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Book flight to Hyderabad</span><span class="time">Sat 9:30</span></span><span class="sub"><span class="t">Due Sat 10:00 AM · just added</span></span><span class="why"><span class="tag">Manual</span>Kiran (Brother)</span></span></div>
+      <div class="gh rr rt-up">Later</div>
+      <div class="rr rt-up row"><span class="ric">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Arjun’s birthday gift</span><span class="time">Mar 10</span></span><span class="sub"><span class="t">Due Mar 11 · 1 day before</span></span><span class="why"><span class="tag">Manual</span>linked to Arjun</span></span></div>
+
+      <label for="rd-5" class="rr rt-sn row rc-5"><span class="ric">z</span><span class="meta"><span class="top"><span>Call Mom back</span><span class="time u">1:00 PM</span></span><span class="sub"><span class="t">Snoozed 2× · was due 9:00 AM</span></span><span class="why"><span class="tag">From chat</span>Mom · “Call me when you’re free”</span></span></label>
+
+      <div class="rr rt-done row read"><span class="ric">✓</span><span class="meta"><span class="top"><span>Team standup</span><span class="time">8:55 AM</span></span><span class="sub"><span class="t">Marked done 9:02 AM</span></span><span class="why"><span class="tag">Manual</span>↻ weekdays</span></span></div>
+      <div class="rr rt-done row read"><span class="ric">✓</span><span class="meta"><span class="top"><span>Share mockups with Neha</span><span class="time">Mon</span></span><span class="sub"><span class="t">Marked done Mon 4:10 PM</span></span><span class="why"><span class="tag">From chat</span>Product Team</span></span></div>
+      <div class="rr rt-done row dim"><span class="ric">!</span><span class="meta"><span class="top"><span>Pay electricity bill</span><span class="time">Sun</span></span><span class="sub"><span class="t">Missed · alert dismissed, not done</span></span><span class="why"><span class="btn ghost" style="padding:2px 8px">Reschedule</span></span></span></div>
+
+      <div class="foot">Every task with a time gets a reminder. Set when and how you’re alerted for each one. Add tasks here or in Assistant.</div>
+    </aside>
+
+    <main class="main mp mn-rem">
+      <div class="ch"><div><div class="n">Reminder details</div><div class="s">Pick a reminder on the left to edit it</div></div>
+        <div class="r"><span class="tag">3 today</span><span class="tag">1 snoozed</span></div></div>
+      <div class="pad">
+
+        <!-- rd-1 Medicines -->
+        <div class="rdp rdp-1"><div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <div class="lb">Reminder · click to edit</div>
+            <div class="h2" contenteditable="true" style="outline:none">Pick up medicines for Dad</div>
+            <div class="src" style="margin-bottom:12px">Added by voice today, 10:15 AM: “Remind me to pick up Dad’s medicines at 6:30 from Apollo”</div>
+            <div class="grid2"><div class="field"><span class="lb">Due date</span><div class="v" contenteditable="true">Today, Tue 27 Oct</div></div><div class="field"><span class="lb">Due time</span><div class="v" contenteditable="true">6:30 PM</div></div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="chips" style="padding:0"><span class="chip">At due time</span><span class="chip">10 min before</span><span class="chip on">30 min before</span><span class="chip">1 hour before</span><span class="chip">1 day before</span></div></div>
+            <div class="field"><span class="lb">Alert style</span><div class="chips" style="padding:0"><span class="chip on">Notification</span><span class="chip">Notification + sound</span><span class="chip">Alarm until dismissed</span></div></div>
+            <div class="grid2"><div class="field"><span class="lb">Repeat</span><div class="v">Does not repeat ▾</div></div><div class="field"><span class="lb">Location note</span><div class="v" contenteditable="true">Apollo Pharmacy</div></div></div>
+            <div class="acts"><span class="btn pri">✓ Mark done</span><span class="btn">Snooze ▾</span><span class="btn ghost">Delete</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card"><div class="lb">Alert preview · 6:00 PM</div>
+              <div class="notif"><div style="display:flex;gap:8px"><span>⏰</span><div style="flex:1"><b>Pick up medicines for Dad</b><div style="font-size:12px;color:#bbb">Due 6:30 PM · Apollo Pharmacy</div></div></div><div class="acts" style="margin-top:8px"><span class="btn pri">✓ Done</span><span class="btn">Snooze</span></div></div></div>
+            <div class="card"><div class="lb">Snooze options</div><div class="chips" style="padding:0"><span class="chip">15 min</span><span class="chip">1 hour</span><span class="chip">Tonight 8 PM</span><span class="chip">Tomorrow 9 AM</span></div></div>
+          </div>
+        </div></div>
+
+        <!-- rd-2 Timesheet (recurring) -->
+        <div class="rdp rdp-2"><div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <div class="lb">Reminder · click to edit</div>
+            <div class="h2" contenteditable="true" style="outline:none">Submit timesheet</div>
+            <div class="src" style="margin-bottom:12px">Typed by you · 6 Oct</div>
+            <div class="grid2"><div class="field"><span class="lb">Due</span><div class="v">Every Tuesday</div></div><div class="field"><span class="lb">Due time</span><div class="v" contenteditable="true">7:00 PM</div></div></div>
+            <div class="field"><span class="lb">Repeat</span><div class="chips" style="padding:0"><span class="chip">Daily</span><span class="chip on">Weekly · Tue</span><span class="chip">Monthly</span><span class="chip">Custom</span></div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="chips" style="padding:0"><span class="chip">At due time</span><span class="chip">10 min before</span><span class="chip on">30 min before</span><span class="chip">1 hour before</span></div></div>
+            <div class="field"><span class="lb">Next 3 alerts</span><div class="note" style="color:#333">Tue 27 Oct 6:30 PM · Tue 3 Nov 6:30 PM · Tue 10 Nov 6:30 PM</div></div>
+            <div class="acts"><span class="btn pri">✓ Done for this week</span><span class="btn">Skip this week</span><span class="btn ghost">Stop repeating</span></div>
+          </div>
+          <div class="card"><div class="lb">History</div>
+            <div class="tl"><div class="e done"><span class="hr">20 Oct</span><span class="d"></span><span style="flex:1">Done at 6:41 PM</span></div><div class="e done"><span class="hr">13 Oct</span><span class="d"></span><span style="flex:1">Done at 7:20 PM · snoozed once</span></div><div class="e done" style="border:0"><span class="hr">6 Oct</span><span class="d"></span><span style="flex:1">Done at 6:35 PM</span></div></div></div>
+        </div></div>
+
+        <!-- rd-3 Bank call (voice) -->
+        <div class="rdp rdp-3"><div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <div class="lb">Reminder · click to edit</div>
+            <div class="h2" contenteditable="true" style="outline:none">Call the bank about loan papers</div>
+            <div class="src" style="margin-bottom:12px">Added by voice just now: “Remind me to call the bank on Friday at 11 AM about the loan papers”</div>
+            <div class="grid2"><div class="field"><span class="lb">Due date</span><div class="v" contenteditable="true">Fri, 30 Oct 2026</div></div><div class="field"><span class="lb">Due time</span><div class="v" contenteditable="true">11:00 AM</div></div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="chips" style="padding:0"><span class="chip">At due time</span><span class="chip">10 min before</span><span class="chip on">30 min before</span><span class="chip">1 day before</span></div></div>
+            <div class="field"><span class="lb">Alert style</span><div class="chips" style="padding:0"><span class="chip">Notification</span><span class="chip on">Notification + sound</span><span class="chip">Alarm until dismissed</span></div></div>
+            <div class="acts"><span class="btn pri">✓ Mark done</span><span class="btn">Snooze ▾</span><span class="btn ghost">Delete</span></div>
+          </div>
+          <div class="card"><div class="lb">Alert preview · Fri 10:30 AM</div>
+            <div class="notif"><div style="display:flex;gap:8px"><span>⏰</span><div style="flex:1"><b>Call the bank about loan papers</b><div style="font-size:12px;color:#bbb">Due 11:00 AM</div></div></div><div class="acts" style="margin-top:8px"><span class="btn pri">✓ Done</span><span class="btn">Snooze</span></div></div></div>
+        </div></div>
+
+        <!-- rd-4 Q3 report (from chat) -->
+        <div class="rdp rdp-4"><div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <div class="lb">Reminder · click to edit</div>
+            <div class="h2" contenteditable="true" style="outline:none">Send Q3 report to Priya</div>
+            <div class="src" style="margin-bottom:12px">Suggested from Priya’s chat · approved by you at 10:45 AM</div>
+            <div class="card" style="background:#f6f6f6;padding:9px 12px;margin-bottom:12px;font-size:13px">“Great. Can you send the report by 4 PM? Leadership review is at 5.” <span class="src">· Priya, 10:42</span></div>
+            <div class="grid2"><div class="field"><span class="lb">Due date</span><div class="v" contenteditable="true">Today, Tue 27 Oct</div></div><div class="field"><span class="lb">Due time</span><div class="v" contenteditable="true">4:00 PM</div></div></div>
+            <div class="field"><span class="lb">Remind me</span><div class="chips" style="padding:0"><span class="chip">At due time</span><span class="chip">10 min before</span><span class="chip on">30 min before</span><span class="chip">1 hour before</span></div></div>
+            <div class="acts"><span class="btn pri">✓ Mark done</span><span class="btn">Snooze ▾</span><label for="p-priya" class="btn">Open chat</label><span class="btn ghost">Delete</span></div>
+          </div>
+          <div class="card"><div class="lb">Alert preview · 3:30 PM</div>
+            <div class="notif"><div style="display:flex;gap:8px"><span>⏰</span><div style="flex:1"><b>Send Q3 report to Priya</b><div style="font-size:12px;color:#bbb">Due 4:00 PM · from her chat</div></div></div><div class="acts" style="margin-top:8px"><span class="btn pri">✓ Done</span><span class="btn">Snooze</span><label for="p-priya" class="btn">Open chat</label></div></div></div>
+        </div></div>
+
+        <!-- rd-5 Snoozed -->
+        <div class="rdp rdp-5"><div class="grid2" style="grid-template-columns:1.3fr 1fr;align-items:start">
+          <div class="card">
+            <div class="lb">Snoozed reminder</div>
+            <div class="h2" contenteditable="true" style="outline:none">Call Mom back</div>
+            <div class="src" style="margin-bottom:12px">Suggested from Mom’s chat: “Call me when you’re free ♡” · approved 8:35 AM</div>
+            <div class="field"><span class="lb">Snoozed until</span><div class="v" contenteditable="true">Today, 1:00 PM</div></div>
+            <div class="field"><span class="lb">Snooze history</span><div class="note" style="color:#333">9:00 AM → snoozed 1 hour · 10:00 AM → snoozed until 1:00 PM</div></div>
+            <div class="acts"><span class="btn pri">✓ Mark done</span><span class="btn">Snooze again ▾</span><label for="p-mom" class="btn">Open chat</label></div>
+          </div>
+          <div class="card"><div class="lb">Tip</div><div class="note">Snoozed twice. Want to pick a fixed time? <span class="chip">Lunch 1 PM</span> <span class="chip">After work 8 PM</span></div></div>
+        </div></div>
+
+      </div>
+    </main>
+
+    <!-- ===================== SCHEDULED ===================== -->
+    <aside class="list lp ls-sch">
+      <div class="list-h"><b>Scheduled</b><label for="p-schnew" class="btn pri">+ New</label></div>
+      <div class="chips"><label for="sc-act" class="chip">Active</label><label for="sc-hist" class="chip">Sent history</label></div>
+      <div class="sh-act">
+        <div class="gh">Recurring</div>
+        <div class="row" style="background:#e6e6e6"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time u">7:00 AM</span></span><span class="sub"><span class="t">Good morning Amma ☀️</span><span class="tag no-pause">↻ Daily</span><span class="tag solid if-pause">Paused</span></span><span class="why">Next: Tomorrow 7:00 AM</span></span></div>
+        <div class="row"><span class="av">PT</span><span class="meta"><span class="top"><span>Product Team</span><span class="time">5:00 PM</span></span><span class="sub"><span class="t">Weekly status: all tasks on track…</span><span class="tag">↻ Fri</span></span><span class="why">Next: Fri 30 Oct</span></span></div>
+        <div class="row if-sch"><span class="av">SN</span><span class="meta"><span class="top"><span>Sneha</span><span class="time">5:30 PM</span></span><span class="sub"><span class="t">Hey! Gym today at 6? 💪</span><span class="tag">↻ M W F</span></span><span class="why">Next: Wed 28 Oct · just added</span></span></div>
+        <div class="row dim"><span class="av">DA</span><span class="meta"><span class="top"><span>Dad</span><span class="time">6:00 PM</span></span><span class="sub"><span class="t">How was your week, Nanna?</span><span class="tag solid">Paused</span></span><span class="why">↻ Sundays</span></span></div>
+        <div class="gh">One-time</div>
+        <div class="row"><span class="av">AK</span><span class="meta"><span class="top"><span>Arjun</span><span class="time">12:00 AM</span></span><span class="sub"><span class="t">Happy birthday bro! 🎉 Have a great year</span><span class="tag">Once</span></span><span class="why">Thu 12 Mar 2027</span></span></div>
+      </div>
+      <div class="sh-hist">
+        <div class="row"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">Today 7:00</span></span><span class="sub"><span class="t">Good morning Amma ☀️</span><span class="tag">✓ Read 7:12</span></span></span></div>
+        <div class="row"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">Mon 7:00</span></span><span class="sub"><span class="t">Good morning Amma ☀️</span><span class="tag">✓ Read 7:05</span></span></span></div>
+        <div class="row"><span class="av">PT</span><span class="meta"><span class="top"><span>Product Team</span><span class="time">Fri 5:00</span></span><span class="sub"><span class="t">Weekly status: all tasks on track…</span><span class="tag">✓ Delivered</span></span></span></div>
+        <div class="row dim"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">Sun 7:00</span></span><span class="sub"><span class="t">Good morning Amma ☀️</span><span class="tag">Skipped by you</span></span></span></div>
+      </div>
+      <div class="foot">You write every scheduled message. The AI never changes it before sending.</div>
+    </aside>
+
+    <main class="main mp mn-sch">
+      <div class="ch"><span class="av sm">MO</span><div><div class="n">Mom · daily good morning</div><div class="s">Created 12 Oct · sent 15 times</div></div>
+        <div class="r"><span class="btn">✎ Edit</span><span class="btn">Skip next</span><span class="btn ghost">Delete</span></div></div>
+      <div class="pad">
+        <div class="grid2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="card">
+              <span class="lb">Message (sent exactly as written)</span>
+              <div class="b out" style="max-width:100%;display:inline-block">Good morning Amma ☀️</div>
+            </div>
+            <div class="card">
+              <div class="set"><div class="tx"><b>Repeats</b><span>Every day at 7:00 AM</span></div></div>
+              <div class="set"><div class="tx"><b>Next sends</b><span>Wed 28 Oct · Thu 29 Oct · Fri 30 Oct, 7:00 AM</span></div></div>
+              <label for="x-pause" class="set" style="border:0"><span class="tx"><b>Pause this schedule</b><span class="no-pause">Active</span><span class="if-pause">Paused · nothing will be sent</span></span><span class="tog tg-pause"></span></label>
+            </div>
+          </div>
+          <div class="card">
+            <b style="font-size:14px">Safeguards</b>
+            <label class="set"><span class="tx"><b>Notify me 5 min before sending</b><span>“Sending ‘Good morning Amma ☀️’ to Mom at 7:00 · Cancel”</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <div class="set"><div class="tx"><b>Same text every time</b><span>The AI never rewrites a scheduled message</span></div><span class="tag solid">Locked</span></div>
+            <label class="set" style="border:0"><span class="tx"><b>Skip if I already chatted today</b><span>Don’t send if you messaged Mom since midnight</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- New schedule -->
+    <div class="ov ov-schnew">
+      <div class="modal" style="width:540px">
+        <div class="mh">Schedule a message</div>
+        <div class="mb">
+          <div class="field"><span class="lb">To</span><div class="v" style="display:flex;align-items:center;gap:10px"><span class="av sm">SN</span><b style="flex:1">Sneha</b><span class="tag">Friends</span><span class="src">change ▾</span></div></div>
+          <div class="field"><span class="lb">Message · click to edit</span>
+            <div class="v" contenteditable="true" style="min-height:56px">Hey! Gym today at 6? 💪</div>
+            <input type="checkbox" id="hw" class="lc dr-t">
+            <label for="hw" class="btn" style="margin-top:8px">✦ Help me write</label>
+            <div class="dr-box card ai-card" style="margin-top:8px;padding:10px 12px;font-size:13px">“Hey Sneha! Gym at 6 today? Let’s not skip leg day 😄” <div class="acts" style="margin-top:8px"><span class="btn pri">Use this</span><label for="hw" class="btn ghost">Dismiss</label></div><div class="src" style="margin-top:6px">You approve the draft once. After that the same text is sent every time.</div></div>
+          </div>
+          <div class="field"><span class="lb">Repeat</span>
+            <div class="chips" style="padding:0"><label for="r-once" class="chip">Once</label><label for="r-daily" class="chip">Daily</label><label for="r-weekly" class="chip">Weekly</label><label for="r-custom" class="chip">Custom</label></div>
+            <div class="wd chips" style="padding:8px 0 0"><span class="chip" style="background:#111;color:#fff;border-color:#111">Mon</span><span class="chip">Tue</span><span class="chip" style="background:#111;color:#fff;border-color:#111">Wed</span><span class="chip">Thu</span><span class="chip" style="background:#111;color:#fff;border-color:#111">Fri</span><span class="chip">Sat</span><span class="chip">Sun</span></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><span class="lb">Time</span><div class="v" contenteditable="true">5:30 PM</div></div>
+            <div class="field"><span class="lb">Starts</span><div class="v" contenteditable="true">Wed, 28 Oct 2026</div></div>
+          </div>
+          <label class="set" style="padding-top:0"><span class="tx"><b>Notify me 5 min before sending</b><span>So you can cancel or edit</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+          <div class="card" style="background:#f6f6f6;font-size:13px;margin-top:10px">◷ <span class="rv rv-once">Sends once on Wed 28 Oct at 5:30 PM.</span><span class="rv rv-daily">Sends every day at 5:30 PM, starting Wed 28 Oct.</span><span class="rv rv-weekly">Sends every Mon, Wed and Fri at 5:30 PM, starting Wed 28 Oct.</span><span class="rv rv-custom">Sends every 2 weeks on Mon, Wed and Fri at 5:30 PM.</span></div>
+        </div>
+        <div class="mf"><label for="p-sch" class="btn ghost lg">Cancel</label><label for="x-sch" class="btn pri lg">Schedule</label></div>
+      </div>
+    </div>
+
+    <!-- ===================== MEMORY ===================== -->
+    <aside class="list lp ls-mem">
+      <div class="list-h"><b>Memory</b><span class="btn pri">+ Add</span></div>
+      <div class="search">⌕ &nbsp;Search memory</div>
+      <div class="chips"><label for="mt-ppl" class="chip">People</label><label for="mt-rules" class="chip">My rules</label></div>
+      <div class="mt-p">
+        <label for="mp-priya" class="row mc-priya"><span class="av">PS</span><span class="meta"><span class="top"><span>Priya Sharma</span><span class="time">3 notes</span></span><span class="why"><span class="tag">Professional</span>+1 suggested</span></span></label>
+        <label for="mp-mom" class="row mc-mom"><span class="av">MO</span><span class="meta"><span class="top"><span>Mom</span><span class="time">3 notes</span></span><span class="why"><span class="tag">Family</span></span></span></label>
+        <label for="mp-ravi" class="row mc-ravi"><span class="av">RV</span><span class="meta"><span class="top"><span>Ravi Kumar</span><span class="time">2 notes</span></span><span class="why"><span class="tag">Professional</span></span></span></label>
+        <div class="row"><span class="av">AK</span><span class="meta"><span class="top"><span>Arjun</span><span class="time">2 notes</span></span><span class="why"><span class="tag">Friends</span></span></span></div>
+      </div>
+      <div class="mt-r">
+        <div class="gh">Tone</div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>Professional tone with Professional contacts</span></span><span class="why"><span class="tag">Professional</span></span></span></div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>Keep replies short</span></span><span class="why"><span class="tag">Everyone</span></span></span></div>
+        <div class="gh">Language</div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>Reply in Telugu-English with family</span></span><span class="why"><span class="tag">Family</span><span class="tag">Relatives</span></span></span></div>
+        <div class="gh">Avoid</div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>No emojis with managers</span></span><span class="why"><span class="tag">Professional</span></span></span></div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>Never discuss salary in chat</span></span><span class="why"><span class="tag">Everyone</span></span></span></div>
+        <div class="gh">Culture &amp; occasions</div>
+        <div class="row"><span class="meta"><span class="top" style="font-weight:500"><span>Greet elders with respect (“Namaste Uncle”)</span></span><span class="why"><span class="tag">Relatives</span></span></span></div>
+      </div>
+      <div class="foot">Only approved memory is used in reply suggestions.</div>
+    </aside>
+
+    <main class="main mp mn-mem">
+      <div class="mt-p memwrap">
+        <div class="pad">
+          <div class="mpd mpd-priya">
+            <div class="h2">Priya Sharma</div><div class="note" style="margin-bottom:14px">Professional · used when suggesting replies to Priya</div>
+            <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+              <input type="checkbox" id="hd1" class="lc hd">
+              <div class="hd-box card ai-card"><span class="ai">Suggested from chat</span><div style="font-size:14px;margin-top:6px">Leadership review is on Tuesdays at 5 PM.</div><div class="src">From Priya’s message today, 10:42</div><div class="acts" style="margin-top:8px"><label for="hd1" class="btn pri">Save</label><label for="hd1" class="btn ghost">Not now</label></div></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Role</span><div style="flex:1"><div contenteditable="true" style="font-size:14px;outline:none">Project Manager</div><div class="src">Added by you · 12 Oct</div></div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Preference</span><div style="flex:1"><div contenteditable="true" style="font-size:14px;outline:none">Prefers short, clear updates</div><div class="src">Suggested from chat · approved 15 Oct</div></div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Fact</span><div style="flex:1"><div contenteditable="true" style="font-size:14px;outline:none">Working on the Q3 report with me</div><div class="src">Suggested from chat · approved 20 Oct</div></div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="acts"><span class="btn">+ Add note about Priya</span><label for="p-priya" class="btn ghost">Open chat →</label><span class="btn ghost">Delete all for Priya</span></div>
+            </div>
+          </div>
+          <div class="mpd mpd-mom">
+            <div class="h2">Mom</div><div class="note" style="margin-bottom:14px">Family · AI suggestions are off for this chat, so this memory is only used if you turn them on</div>
+            <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Preference</span><div style="flex:1;font-size:14px">Prefers calls over long texts</div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Language</span><div style="flex:1;font-size:14px">Talks in Telugu, calls me “kanna”</div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Date</span><div style="flex:1;font-size:14px">Birthday: 14 January</div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+            </div>
+          </div>
+          <div class="mpd mpd-ravi">
+            <div class="h2">Ravi Kumar</div><div class="note" style="margin-bottom:14px">Professional</div>
+            <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Role</span><div style="flex:1;font-size:14px">Project lead for the product launch</div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+              <div class="card" style="display:flex;gap:12px;align-items:center"><span class="tag">Preference</span><div style="flex:1;font-size:14px">Prefers formal replies</div><span class="btn ghost">✎</span><span class="btn ghost">🗑&#xFE0E;</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-r memwrap">
+        <div class="pad">
+          <div class="h2">My rules</div><div class="note" style="margin-bottom:14px">How you want to come across. Applied to every reply suggestion for the matching contacts.</div>
+          <div class="card" style="max-width:640px">
+            <b style="font-size:14px">Add a rule</b>
+            <div class="field" style="margin-top:10px"><span class="lb">Rule</span><div class="v" contenteditable="true" style="color:#888">e.g. Wish relatives on festivals in Telugu</div></div>
+            <div class="field"><span class="lb">Applies to</span><div class="chips" style="padding:0"><span class="chip">Everyone</span><span class="chip">Friends</span><span class="chip">Professional</span><span class="chip">Family</span><span class="chip" style="background:#111;color:#fff;border-color:#111">Relatives</span><span class="chip">One contact…</span></div></div>
+            <div class="field" style="margin:0"><span class="lb">Type</span><div class="chips" style="padding:0"><span class="chip">Tone</span><span class="chip">Language</span><span class="chip">Avoid</span><span class="chip" style="background:#111;color:#fff;border-color:#111">Culture &amp; occasions</span></div></div>
+            <div class="acts" style="margin-top:12px"><span class="btn pri">Save rule</span><span class="btn">🎙&#xFE0E; Say it</span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===================== SETTINGS ===================== -->
+    <aside class="list lp ls-set">
+      <div class="list-h"><b>Settings</b></div>
+      <div class="row"><span class="av">UK</span><span class="meta"><span class="top"><span>Uday K</span></span><span class="why">Account · Profile</span></span></div>
+      <div class="row" style="background:#e6e6e6"><span style="width:20px">⛉</span><span class="meta"><span class="top"><span>Privacy &amp; AI</span></span></span></div>
+      <label for="p-mem" class="row"><span style="width:20px">◈</span><span class="meta"><span class="top"><span>Memory</span><span class="time">→</span></span></span></label>
+      <label for="p-rem" class="row"><span style="width:20px">⏰&#xFE0E;</span><span class="meta"><span class="top"><span>Reminders</span><span class="time">→</span></span></span></label>
+      <label for="p-sch" class="row"><span style="width:20px">◷</span><span class="meta"><span class="top"><span>Scheduled messages</span><span class="time">→</span></span></span></label>
+      <div class="row"><span style="width:20px">◔</span><span class="meta"><span class="top"><span>Notifications</span></span></span></div>
+      <label for="p-onb" class="row"><span style="width:20px">ⓘ</span><span class="meta"><span class="top"><span>Show onboarding again</span></span></span></label>
+    </aside>
+    <main class="main mp mn-set">
+      <div class="pad">
+        <div class="h2" style="margin-bottom:14px">Privacy &amp; AI</div>
+        <div class="grid2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card">
+              <b style="font-size:14px">Behaviour ranking (Feature 1)</b>
+              <label class="set"><span class="tx"><b>Learn from my reading behaviour</b><span>Tracks delivered time, read time, minutes per chat. On device only.</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+              <div class="set"><div class="tx"><b>Window</b><span>Last 14 days</span></div><span class="btn ghost">Change</span></div>
+              <div class="set" style="border:0"><div class="tx"><b>Reset all behaviour data</b><span>Rankings start fresh</span></div><span class="btn">Reset</span></div>
+            </div>
+            <div class="card">
+              <b style="font-size:14px">Voice &amp; scheduling</b>
+              <div class="set"><div class="tx"><b>Voice tasks</b><span>Speech → text → AI extracts task. Audio not stored.</span></div><span class="tag">On</span></div>
+              <label class="set" style="border:0"><span class="tx"><b>Notify before scheduled sends</b><span>Default for new schedules</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            </div>
+          </div>
+          <div class="card">
+            <b style="font-size:14px">AI suggestions per chat</b>
+            <div class="note" style="margin:4px 0 4px">Only chats turned on here are read by the AI.</div>
+            <label class="set"><span class="tx"><b>Priya Sharma</b><span>Professional</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Product Team</b><span>Professional · group</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Ravi Kumar</b><span>Professional</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Arjun</b><span>Friends</span></span><input type="checkbox" class="lc" checked><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Mom</b><span>Family</span></span><input type="checkbox" class="lc"><span class="tog"></span></label>
+            <label class="set"><span class="tx"><b>Dad</b><span>Family</span></span><input type="checkbox" class="lc"><span class="tog"></span></label>
+            <div class="set" style="border:0"><div class="tx"><b>External contacts</b><span>Always off until saved</span></div><span class="tag solid">Off</span></div>
+            <div class="note" style="margin-top:8px">Sent to AI only when you tap ✦ AI assist: the context you type, contact memory, your rules, a short chat summary, the last ~10 messages. Never logged.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Assumptions overlay -->
+    <div class="ov ov-notes" style="z-index:9">
+      <div class="modal" style="width:620px">
+        <div class="mh">Assumptions used in this wireframe<label for="x-notes" class="x" style="margin-left:auto;font-weight:400">✕</label></div>
+        <div class="mb" style="font-size:13px;line-height:1.65">
+          <b>Q1</b> Unread chats first, then read. The habit score orders each group. A <b>Recent</b> toggle shows the plain newest-first order.<br>
+          <b>Q2</b> Read speed and time spent weigh 50 / 50.<br>
+          <b>Q3</b> One category per contact.<br>
+          <b>Q4</b> Groups go into the same categories (Product Team → Professional).<br>
+          <b>Q5</b> AI assist is optional. It opens only when you tap <b>✦ AI assist</b>. It first asks what you want to say, then suggests replies.<br>
+          <b>Q6</b> Tasks can repeat, and tasks with no date are allowed.<br>
+          <b>Q7</b> If a voice task is unclear, the PA asks a follow-up question.<br>
+          <b>Q8</b> “My rules” covers ethics (avoid), etiquette (tone), and culture and language.<br>
+          <b>Q9</b> The AI can draft a scheduled message. You approve it once.<br>
+          <b>Q10</b> Recurring messages send the same text every time.
+        </div>
+        <div class="mf"><label for="x-notes" class="btn pri">Got it</label></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
