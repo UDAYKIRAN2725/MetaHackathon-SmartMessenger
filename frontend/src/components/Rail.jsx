@@ -1,9 +1,12 @@
 import { useApp } from '../AppContext';
+import { useAuth } from '../AuthContext';
+import { initials } from '../auth';
 import { CHATS, ALARM } from '../data';
 import { cx } from '../utils';
 
 export default function Rail() {
   const { view, go, reminders } = useApp();
+  const { user } = useAuth();
   const unreadChats = CHATS.filter((c) => c.unread > 0).length;
   const todayReminders = reminders.filter((r) => r.status === 'up' && r.group === 0).length;
 
@@ -27,7 +30,7 @@ export default function Rail() {
       {items.map((it) => <Item key={it.v} {...it} />)}
       <div className="fill" />
       <Item v="set" g={'⚙\uFE0E'} label="Settings" />
-      <div className="me">UK</div>
+      <button type="button" className="me" title={`${user.name} · Settings`} onClick={() => go('set')}>{initials(user.name)}</button>
     </nav>
   );
 }

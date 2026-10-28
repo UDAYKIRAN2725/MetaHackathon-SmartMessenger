@@ -5,9 +5,9 @@ import { buildTaskAndReminder } from './utils';
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
 
-export function AppProvider({ children }) {
+export function AppProvider({ children, initialView = 'onb' }) {
   // Navigation
-  const [view, setView] = useState('onb'); // onb | chats | pa | rem | sch | mem | set
+  const [view, setView] = useState(initialView); // onb | chats | pa | rem | sch | mem | set
   const [chat, setChat] = useState(null); // open chat id within "chats"
   const [drawer, setDrawer] = useState(false);
   const [modal, setModal] = useState(null); // voice | voice2 | panew | schnew

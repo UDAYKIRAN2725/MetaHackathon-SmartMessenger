@@ -1,9 +1,12 @@
 import { useApp } from '../AppContext';
+import { useAuth } from '../AuthContext';
+import { initials } from '../auth';
 import { ALARM, SETTINGS_AI } from '../data';
 import { Btn, ToggleRow } from '../components/common';
 
 export function SettingsList() {
   const { go } = useApp();
+  const { user, logout } = useAuth();
   const Link = ({ icon, label, to }) => (
     <button type="button" className="row click" onClick={() => go(to)}>
       <span style={{ width: 20 }}>{icon}</span>
@@ -14,8 +17,11 @@ export function SettingsList() {
     <aside className="list">
       <div className="list-h"><b>Settings</b></div>
       <div className="row">
-        <span className="av">UK</span>
-        <span className="meta"><span className="top"><span>Uday K</span></span><span className="why">Account · Profile</span></span>
+        <span className="av">{initials(user.name)}</span>
+        <span className="meta">
+          <span className="top"><span>{user.name}</span></span>
+          <span className="why">{user.email} · +{user.phone}</span>
+        </span>
       </div>
       <div className="row sel">
         <span style={{ width: 20 }}>⛉</span>
@@ -31,6 +37,10 @@ export function SettingsList() {
       <button type="button" className="row click" onClick={() => go('onb')}>
         <span style={{ width: 20 }}>ⓘ</span>
         <span className="meta"><span className="top"><span>Show onboarding again</span></span></span>
+      </button>
+      <button type="button" className="row click" onClick={logout}>
+        <span style={{ width: 20 }}>⎋</span>
+        <span className="meta"><span className="top"><span>Log out</span></span></span>
       </button>
     </aside>
   );
