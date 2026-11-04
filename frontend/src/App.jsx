@@ -1,19 +1,20 @@
 import { useApp } from './AppContext';
 import Strip from './components/Strip';
 import Rail from './components/Rail';
+import ReminderAlerts from './components/ReminderAlerts';
 import Onboarding from './pages/Onboarding';
 import Assumptions from './components/Assumptions';
 import { ChatsList, ChatsHome } from './pages/Chats';
 import ChatView from './pages/ChatView';
 import ContactDrawer from './pages/ContactDrawer';
-import { AssistantList, AssistantMain, VoiceModal, VoiceConfirmModal, NewTaskModal, ReminderToast } from './pages/Assistant';
+import { AssistantList, AssistantMain } from './pages/Assistant';
 import { RemindersList, ReminderDetail } from './pages/Reminders';
 import { ScheduledList, ScheduledDetail, NewScheduleModal } from './pages/Scheduled';
-import { MemoryList, MemoryMain } from './pages/Memory';
+import { MemoryPage } from './pages/Memory';
 import { SettingsList, SettingsMain } from './pages/Settings';
 
 export default function App() {
-  const { view, chat, drawer, modal, toast, notesOpen } = useApp();
+  const { view, chat, drawer, modal, notesOpen } = useApp();
 
   return (
     <div className="app">
@@ -28,7 +29,7 @@ export default function App() {
             <>
               <ChatsList />
               {chat ? <ChatView key={chat} id={chat} /> : <ChatsHome />}
-              {chat === 'priya' && drawer && <ContactDrawer />}
+              {chat && drawer && <ContactDrawer chatKey={chat} />}
             </>
           )}
           {view === 'pa' && (
@@ -49,12 +50,7 @@ export default function App() {
               <ScheduledDetail />
             </>
           )}
-          {view === 'mem' && (
-            <>
-              <MemoryList />
-              <MemoryMain />
-            </>
-          )}
+          {view === 'mem' && <MemoryPage />}
           {view === 'set' && (
             <>
               <SettingsList />
@@ -62,11 +58,8 @@ export default function App() {
             </>
           )}
 
-          {modal === 'voice' && <VoiceModal />}
-          {modal === 'voice2' && <VoiceConfirmModal />}
-          {modal === 'panew' && <NewTaskModal />}
           {modal === 'schnew' && <NewScheduleModal />}
-          {toast && <ReminderToast />}
+          <ReminderAlerts />
         </div>
       )}
       {notesOpen && <Assumptions />}

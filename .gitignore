@@ -3,3 +3,5 @@
 __pycache__/
 node_modules/
 dist/
+smart-messenger-prototype.html
+smart-messenger-wireframes.html

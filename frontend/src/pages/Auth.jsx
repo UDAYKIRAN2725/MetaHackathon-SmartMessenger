@@ -196,7 +196,7 @@ function RegisterForm({ onSwitch }) {
   );
 }
 
-export default function AuthPage() {
+export default function AuthPage({ bootError }) {
   const [mode, setMode] = useState('login');
   return (
     <div className="app">
@@ -225,6 +225,7 @@ export default function AuthPage() {
               <button type="button" style={{ flex: 1, padding: 8 }} className={cx(mode === 'login' && 'on')} onClick={() => setMode('login')}>Log in</button>
               <button type="button" style={{ flex: 1, padding: 8 }} className={cx(mode === 'register' && 'on')} onClick={() => setMode('register')}>Register</button>
             </div>
+            {bootError && <div className="alert">{bootError}</div>}
             {mode === 'login' ? <LoginForm onSwitch={() => setMode('register')} /> : <RegisterForm onSwitch={() => setMode('login')} />}
           </div>
         </div>

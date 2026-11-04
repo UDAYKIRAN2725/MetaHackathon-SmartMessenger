@@ -1,16 +1,21 @@
 import { useApp } from '../AppContext';
 import { useAuth } from '../AuthContext';
+import { useChats } from '../ChatStore';
+import { useTasks } from '../TaskStore';
 import { initials } from '../auth';
-import { CHATS, ALARM } from '../data';
+import { ALARM } from '../data';
+import { group } from '../paFormat';
 import { cx } from '../utils';
 
 export default function Rail() {
-  const { view, go, reminders } = useApp();
+  const { view, go } = useApp();
   const { user } = useAuth();
-  const unreadChats = CHATS.filter((c) => c.unread > 0).length;
-  const todayReminders = reminders.filter((r) => r.status === 'up' && r.group === 0).length;
+  const { items } = useChats();
+  const { tasks } = useTasks();
+  const unreadChats = items.filter((c) => c.unread > 0).length;
+  const todayReminders = tasks.filter((t) => t.status === 'open' && ['Overdue', 'Today'].includes(group(t))).length;
 
-  const items = [
+  const nav = [
     { v: 'chats', g: '▣', label: 'Chats', cnt: unreadChats },
     { v: 'pa', g: '◉', label: 'Assistant' },
     { v: 'rem', g: ALARM, label: 'Reminders', cnt: todayReminders },
@@ -27,7 +32,7 @@ export default function Rail() {
 
   return (
     <nav className="rail">
-      {items.map((it) => <Item key={it.v} {...it} />)}
+      {nav.map((it) => <Item key={it.v} {...it} />)}
       <div className="fill" />
       <Item v="set" g={'⚙\uFE0E'} label="Settings" />
       <button type="button" className="me" title={`${user.name} · Settings`} onClick={() => go('set')}>{initials(user.name)}</button>

@@ -1,34 +1,62 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../AppContext';
-import { REMIND_OPTS } from '../data';
-import { Btn, ChipSelect, Modal } from '../components/common';
+import { useChats } from '../ChatStore';
+import { useTasks } from '../TaskStore';
+import { Btn, Modal } from '../components/common';
+import TaskForm from '../components/TaskForm';
+import ChatTasks from './ChatTasks';
+import {
+  SOURCE_TAG, bucket, byDue, clock, dayOffset, isOverdue, longDay, offsetLabel, whenLabel,
+} from '../paFormat';
 import { cx } from '../utils';
 
 const MIC = '🎙\uFE0E';
+const EXAMPLES = [
+  'Remind me to call the bank on Friday at 11 AM',
+  'Every Tuesday 7 PM, submit timesheet',
+  'What do I have tomorrow?',
+];
 
 function TaskRow({ t }) {
-  const { toggleTask } = useApp();
+  const { done, reopen } = useTasks();
+  const { go, setRemSel } = useApp();
+  const [busy, setBusy] = useState(false);
+  const toggle = async () => {
+    setBusy(true);
+    try {
+      await (t.status === 'done' ? reopen(t.id) : done(t.id));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const over = isOverdue(t);
   return (
-    <label className="row">
-      <input type="checkbox" className="lc" checked={!!t.done} onChange={() => toggleTask(t.id)} />
-      <span className="chk" />
-      <span className="meta">
+    <div className="row">
+      <input id={`tk-${t.id}`} type="checkbox" className="lc" checked={t.status === 'done'} disabled={busy} onChange={toggle} />
+      <label htmlFor={`tk-${t.id}`} className="chk" title={t.repeat !== 'none' ? 'Done for this time' : 'Mark done'} />
+      <button type="button" className="meta" style={{ textAlign: 'left' }} onClick={() => { setRemSel(t.id); go('rem'); }}>
         <span className="top">
           <span>{t.title}</span>
-          <span className={cx('time', t.timeU && 'u')}>{t.time}</span>
+          <span className={cx('time', (over || dayOffset(t.due_at || 0) === 0) && t.due_at && 'u')}>
+            {t.status === 'done' ? whenLabel(t.completed_at) : whenLabel(t.due_at)}
+          </span>
         </span>
-        <span className="why"><span className="tag">{t.tag}</span>{t.who}</span>
-      </span>
-    </label>
+        <span className="why">
+          {over && <span className="tag solid">Overdue</span>}
+          <span className="tag">{SOURCE_TAG[t.source]}</span>
+          {t.chat_name || (t.repeat !== 'none' ? `↻ ${t.repeat}` : !t.due_at ? 'no date' : t.notes)}
+        </span>
+      </button>
+    </div>
   );
 }
 
 export function AssistantList() {
-  const { tasks, paTab, setPaTab, taskAdded, addQ3Task, openModal } = useApp();
-  const [ignored, setIgnored] = useState(false);
+  const { tasks, loading, error } = useTasks();
+  const { paTab, setPaTab, openModal } = useApp();
   const shown = tasks
-    .filter((t) => (paTab === 'done' ? t.done : t.bucket === paTab))
-    .sort((a, b) => a.order - b.order);
+    .filter((t) => bucket(t) === paTab)
+    .sort(paTab === 'done' ? (a, b) => new Date(b.completed_at) - new Date(a.completed_at) : byDue);
   const tabs = [['today', 'Today'], ['up', 'Upcoming'], ['done', 'Completed']];
 
   return (
@@ -40,238 +68,304 @@ export function AssistantList() {
       </div>
       <div className="chips">
         {tabs.map(([id, label]) => (
-          <button type="button" key={id} className={cx('chip', paTab === id && 'on')} onClick={() => setPaTab(id)}>{label}</button>
+          <button type="button" key={id} className={cx('chip', paTab === id && 'on')} onClick={() => setPaTab(id)}>
+            {label} <span className="n">{tasks.filter((t) => bucket(t) === id).length}</span>
+          </button>
         ))}
       </div>
-
-      {!taskAdded && !ignored && paTab !== 'done' && (
-        <div className="card ai-card" style={{ margin: '4px 14px 8px', padding: '10px 12px' }}>
-          <span className="ai">Suggested from chats</span>
-          <div style={{ fontSize: 13.5, fontWeight: 600, marginTop: 4 }}>Send Q3 report to Priya</div>
-          <div className="src">From Priya Sharma · “by 4 PM” · Today 4:00 PM</div>
-          <div className="acts" style={{ marginTop: 8 }}>
-            <Btn kind="pri" onClick={addQ3Task}>Add</Btn>
-            <Btn kind="ghost" onClick={() => setIgnored(true)}>Ignore</Btn>
-          </div>
-        </div>
-      )}
-
-      {shown.map((t) => <TaskRow key={t.id} t={t} />)}
-      <div className="foot">Tasks come from 3 places: typed, spoken, or suggested from chats. Every task needs your OK.</div>
+      {error && <div className="alert" style={{ margin: '0 16px 10px' }}>{error}</div>}
+      {loading ? <div className="empty note">Loading tasks…</div> : shown.map((t) => <TaskRow key={t.id} t={t} />)}
+      {!loading && shown.length === 0 && <div className="empty note">Nothing here.</div>}
+      <div className="foot">Tasks come from 3 places: typed, spoken, or found in chats. Nothing is saved without your OK.</div>
     </aside>
   );
 }
 
+const rangeLabel = (from, to) => {
+  const f = (d) => new Date(`${d}T12:00`).toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'short' });
+  return from === to ? f(from) : `${f(from)} – ${f(to)}`;
+};
+
+function ChatSuggestions() {
+  const { allSuggestions } = useTasks();
+  const { items } = useChats();
+  const [sugs, setSugs] = useState([]);
+  const key = items.map((i) => `${i.id}:${i.suggestions}`).join();
+  useEffect(() => {
+    allSuggestions().then((r) => setSugs(r.items)).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  if (!sugs.length) return null;
+  return (
+    <div className="card ai-card" style={{ marginBottom: 12, paddingBottom: 4 }}>
+      <span className="ai">Suggested from chats</span>
+      <div className="src" style={{ margin: '4px 0 8px' }}>Found by Smart priority in unread messages. Nothing is saved until you add it.</div>
+      <div style={{ margin: '0 -18px' }}><ChatTasks key={key} state={{ items: sugs }} quietWhenEmpty /></div>
+    </div>
+  );
+}
+
 export function AssistantMain() {
-  const { tasks, taskAdded, savedBanners, setPaTab, setToast, openModal, go } = useApp();
-  const todayOpen = tasks.filter((t) => t.bucket === 'today' && !t.done).length;
+  const { tasks, parse, create } = useTasks();
+  const { modal, setModal, go, setRemSel } = useApp();
+  const [text, setText] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const [result, setResult] = useState(null);
+  const [saved, setSaved] = useState([]);
+  const [perm, setPerm] = useState(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (modal === 'panew') {
+      inputRef.current?.focus();
+      setModal(null);
+    }
+  }, [modal, setModal]);
+
+  const run = async (q, source = 'typed') => {
+    const s = q.trim();
+    if (!s || busy) return;
+    setBusy(true);
+    setErr('');
+    setText(s);
+    try {
+      setResult({ ...(await parse(s, source)), source, text: s });
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const save = async (body) => {
+    const d = result.draft;
+    const t = await create({ ...body, source: d.source, source_text: d.source_text });
+    setSaved((b) => [t, ...b.filter((x) => x.id !== t.id)].slice(0, 3));
+    setResult(null);
+    setText('');
+  };
+
+  const open = tasks.filter((t) => t.status === 'open');
+  const today = open.filter((t) => t.due_at && dayOffset(t.due_at) === 0).sort(byDue);
+  const overdue = open.filter(isOverdue);
+  const next = open.filter((t) => t.reminder && t.reminder.status === 'pending').sort((a, b) => new Date(a.reminder.fire_at) - new Date(b.reminder.fire_at))[0];
+  const doneToday = tasks.filter((t) => t.status === 'done' && t.completed_at && dayOffset(t.completed_at) === 0);
 
   return (
     <main className="main">
       <div className="ch">
         <div>
-          <span className="n">Today · Tuesday, 27 Oct</span>
-          <span className="s">{todayOpen} tasks · next at {taskAdded ? '4:00 PM' : '6:30 PM'}</span>
+          <span className="n">Today · {longDay()}</span>
+          <span className="s">
+            {today.length} due today{overdue.length ? ` · ${overdue.length} overdue` : ''}
+            {next ? ` · next alert ${whenLabel(next.reminder.fire_at)}` : ''}
+          </span>
         </div>
-        <div className="r"><Btn onClick={() => setToast(true)}>▶ Preview 3:30 PM alert</Btn></div>
       </div>
       <div className="pad">
-        {savedBanners.map((b) => (
-          <div key={b.id} className="banner" style={{ margin: '0 0 12px' }}>
+        <div className="card" style={{ marginBottom: 12 }}>
+          <b style={{ fontSize: 13.5 }}>Ask your PA</b>
+          <form
+            onSubmit={(e) => { e.preventDefault(); run(text); }}
+            style={{ display: 'flex', gap: 8, marginTop: 8 }}
+          >
+            <input
+              ref={inputRef}
+              className="v"
+              style={{ flex: 1 }}
+              maxLength={500}
+              placeholder="e.g. Remind me to call the bank on Friday at 11 AM"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+            <button type="submit" className="btn pri" disabled={busy || !text.trim()}>{busy ? '✦ Thinking…' : '✦ Go'}</button>
+            <Btn title="Speak" onClick={() => setModal('voice')}>{MIC}</Btn>
+          </form>
+          <div className="chips" style={{ padding: '8px 0 0' }}>
+            {EXAMPLES.map((x) => <button type="button" key={x} className="chip" onClick={() => run(x)}>“{x}”</button>)}
+          </div>
+          {err && <div className="alert" style={{ marginTop: 10, marginBottom: 0 }}>{err}</div>}
+        </div>
+
+        {result?.action === 'create' && (
+          <div className="card ai-card" style={{ marginBottom: 12 }}>
+            <span className="ai">Here’s what I understood</span>
+            <div className="src" style={{ margin: '4px 0 12px' }}>
+              You {result.source === 'voice' ? 'said' : 'typed'}: “{result.text}”. Check it, then save. Nothing is saved yet.
+            </div>
+            <TaskForm
+              initial={result.draft}
+              warnings={result.assumed}
+              onSave={save}
+              onCancel={() => setResult(null)}
+              extra={<Btn onClick={() => setModal('voice')}>{MIC} Say again</Btn>}
+            />
+          </div>
+        )}
+
+        {result?.action === 'ask' && (
+          <div className="card ai-card" style={{ marginBottom: 12 }}>
+            <span className="ai">Quick question</span>
+            <div style={{ fontSize: 14, margin: '6px 0 10px' }}>{result.question}</div>
+            <div className="chips" style={{ padding: 0 }}>
+              {result.options.map((o) => (
+                <button type="button" key={o} className="chip" disabled={busy} onClick={() => run(`${result.text} (${o})`, result.source)}>{o}</button>
+              ))}
+              <Btn kind="ghost" onClick={() => setResult(null)}>Cancel</Btn>
+            </div>
+            <div className="src" style={{ marginTop: 8 }}>Or type a more specific request above.</div>
+          </div>
+        )}
+
+        {result?.action === 'list' && (
+          <div className="card pa-list" style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <b style={{ flex: 1, fontSize: 14 }}>{rangeLabel(result.from, result.to)}</b>
+              <Btn kind="ghost" onClick={() => setResult(null)}>✕</Btn>
+            </div>
+            <div className="tl" style={{ marginTop: 6 }}>
+              {result.tasks.map((t) => (
+                <div key={t.id} className="e">
+                  <span className="hr">{clock(t.due_at)}</span><span className="d" />
+                  <span style={{ flex: 1 }}>{t.title}</span><span className="tag">{SOURCE_TAG[t.source]}</span>
+                </div>
+              ))}
+              {result.tasks.length === 0 && <div className="note" style={{ padding: '8px 0' }}>Nothing planned. 🎉</div>}
+            </div>
+          </div>
+        )}
+
+        <ChatSuggestions />
+
+        {saved.map((t) => (
+          <div key={t.id} className="banner" style={{ margin: '0 0 12px' }}>
             ✓
             <span style={{ flex: 1 }}>
-              Saved{b.tag === 'Voice' ? ' by voice' : ''}: <b>{b.title}</b> · {b.when}
+              Saved{t.source === 'voice' ? ' by voice' : ''}: <b>{t.title}</b> · {t.due_at ? whenLabel(t.due_at) : 'no date'}
+              {t.reminder && ` · alert ${whenLabel(t.reminder.fire_at)}`}
             </span>
-            <Btn onClick={() => setPaTab('up')}>See in Upcoming</Btn>
+            <Btn onClick={() => { setRemSel(t.id); go('rem'); }}>View reminder</Btn>
+            <Btn kind="ghost" onClick={() => setSaved((b) => b.filter((x) => x.id !== t.id))}>✕</Btn>
           </div>
         ))}
+
         <div className="grid2" style={{ gridTemplateColumns: '1.3fr 1fr', alignItems: 'start' }}>
           <div className="card">
-            <b style={{ fontSize: 14 }}>Timeline</b>
+            <b style={{ fontSize: 14 }}>Today’s timeline</b>
             <div className="tl" style={{ marginTop: 6 }}>
-              <div className="e done"><span className="hr">9:00 AM</span><span className="d" /><span style={{ flex: 1 }}>Team standup</span><span className="tag">Manual</span></div>
-              <div className="e now"><span className="hr">10:45 AM</span><span className="d" style={{ background: '#111' }} /><span style={{ flex: 1 }}>Now</span></div>
-              {taskAdded && (
-                <div className="e"><span className="hr">4:00 PM</span><span className="d" /><span style={{ flex: 1 }}>Send Q3 report to Priya<div className="src">Reminder at 3:30 PM</div></span><span className="tag">From chat</span></div>
-              )}
-              <div className="e"><span className="hr">6:30 PM</span><span className="d" /><span style={{ flex: 1 }}>Pick up medicines for Dad</span><span className="tag">Voice</span></div>
-              <div className="e"><span className="hr">7:00 PM</span><span className="d" /><span style={{ flex: 1 }}>Submit timesheet <span className="src">↻ weekly</span></span><span className="tag">Manual</span></div>
-              <div className="e" style={{ border: 0 }}><span className="hr">Anytime</span><span className="d" style={{ borderStyle: 'dashed' }} /><span style={{ flex: 1 }}>Renew gym membership</span><span className="tag">Manual</span></div>
+              {doneToday.map((t) => (
+                <div key={t.id} className="e done"><span className="hr">{clock(t.completed_at)}</span><span className="d" /><span style={{ flex: 1 }}>{t.title}</span><span className="tag">Done</span></div>
+              ))}
+              {overdue.map((t) => (
+                <div key={t.id} className="e"><span className="hr">{clock(t.due_at)}</span><span className="d" style={{ background: '#b00020', borderColor: '#b00020' }} /><span style={{ flex: 1 }}>{t.title}</span><span className="tag solid">Overdue</span></div>
+              ))}
+              <div className="e now"><span className="hr">{clock(new Date().toISOString())}</span><span className="d" style={{ background: '#111' }} /><span style={{ flex: 1 }}>Now</span></div>
+              {today.filter((t) => !isOverdue(t)).map((t) => (
+                <div key={t.id} className="e">
+                  <span className="hr">{clock(t.due_at)}</span><span className="d" />
+                  <span style={{ flex: 1 }}>{t.title}{t.reminder && <div className="src">Alert {clock(t.reminder.fire_at)} · {offsetLabel(t.remind_offset_min)}</div>}</span>
+                  <span className="tag">{SOURCE_TAG[t.source]}</span>
+                </div>
+              ))}
+              {open.filter((t) => !t.due_at).map((t) => (
+                <div key={t.id} className="e" style={{ border: 0 }}><span className="hr">Anytime</span><span className="d" style={{ borderStyle: 'dashed' }} /><span style={{ flex: 1 }}>{t.title}</span><span className="tag">{SOURCE_TAG[t.source]}</span></div>
+              ))}
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div className="card">
-              <b style={{ fontSize: 13.5 }}>Ask your PA</b>
-              <div className="note" style={{ margin: '4px 0 10px' }}>Say or type things like:</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12.5 }}>
-                <div className="v">“Remind me to call the bank on Friday at 11 AM”</div>
-                <div className="v">“Every Tuesday 7 PM, submit timesheet”</div>
-                <div className="v">“What do I have tomorrow?”</div>
-              </div>
-              <Btn kind="pri" block style={{ marginTop: 10 }} onClick={() => openModal('voice')}>{MIC} Hold to speak</Btn>
+          <div className="card">
+            <b style={{ fontSize: 13.5 }}>How reminders reach you</b>
+            <div className="note" style={{ marginTop: 4 }}>
+              An alert in this app at the time you choose, with Done, Snooze and Open chat. If you’re offline, it’s waiting when you come back.
             </div>
-            <div className="card">
-              <b style={{ fontSize: 13.5 }}>How reminders reach you</b>
-              <div className="note" style={{ marginTop: 4 }}>A notification 30 min before (change per task), with Done, Snooze and Open chat.</div>
-              <Btn style={{ marginTop: 8 }} onClick={() => go('rem')}>Open Reminders →</Btn>
-            </div>
+            {perm === 'default' && (
+              <Btn style={{ marginTop: 8 }} onClick={() => Notification.requestPermission().then(setPerm)}>Turn on desktop notifications</Btn>
+            )}
+            {perm === 'granted' && <div className="note" style={{ marginTop: 8 }}>✓ Desktop notifications are on (shown when this tab is in the background).</div>}
+            {perm === 'denied' && <div className="note" style={{ marginTop: 8 }}>Desktop notifications are blocked in your browser settings.</div>}
+            <div className="acts" style={{ marginTop: 8 }}><Btn onClick={() => go('rem')}>Open Reminders →</Btn></div>
           </div>
         </div>
       </div>
+      {modal === 'voice' && (
+        <VoiceModal onCancel={() => setModal(null)} onDone={(t) => { setModal(null); run(t, 'voice'); }} />
+      )}
     </main>
   );
 }
 
-const TRANSCRIPT = 'Remind me to call the bank on Friday at 11 AM about the loan papers';
-const WAVE = [8, 18, 28, 14, 24, 10, 22, 30, 12, 20, 8];
+const SR = typeof window !== 'undefined' ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
 
-export function VoiceModal() {
-  const { setModal } = useApp();
+export function VoiceModal({ onDone, onCancel }) {
+  const [final, setFinal] = useState('');
+  const [interim, setInterim] = useState('');
+  const [listening, setListening] = useState(false);
+  const [err, setErr] = useState(SR ? '' : 'Voice input isn’t supported in this browser. Use Chrome or Edge, or type the task.');
+  const recRef = useRef(null);
+
+  const start = () => {
+    if (!SR) return;
+    const rec = new SR();
+    rec.lang = navigator.language || 'en-IN';
+    rec.interimResults = true;
+    rec.continuous = true;
+    rec.onresult = (e) => {
+      let f = '';
+      let i = '';
+      for (const r of e.results) (r.isFinal ? (f += r[0].transcript) : (i += r[0].transcript));
+      setFinal(f);
+      setInterim(i);
+    };
+    rec.onerror = (e) =>
+      setErr(
+        e.error === 'not-allowed' ? 'Microphone permission was denied.'
+          : e.error === 'no-speech' ? 'I didn’t hear anything. Tap “Listen again”.'
+            : `Voice error: ${e.error}`,
+      );
+    rec.onend = () => setListening(false);
+    setErr('');
+    rec.start();
+    setListening(true);
+    recRef.current = rec;
+  };
+
+  useEffect(() => {
+    start();
+    return () => {
+      if (recRef.current) {
+        recRef.current.onend = null;
+        recRef.current.abort();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const text = `${final} ${interim}`.trim();
+  const finish = () => {
+    recRef.current?.stop();
+    if (text) onDone(text);
+  };
+
   return (
-    <Modal width={440}>
+    <Modal width={460}>
       <div style={{ textAlign: 'center' }}>
-        <div className="mh" style={{ justifyContent: 'center' }}>Listening…</div>
+        <div className="mh" style={{ justifyContent: 'center' }}>{listening ? 'Listening…' : 'Voice task'}</div>
         <div className="mb">
-          <div className="mic">{MIC}</div>
-          <div className="wave">{WAVE.map((h, i) => <i key={i} style={{ height: h }} />)}</div>
-          <div className="v" style={{ textAlign: 'left', lineHeight: 1.5, marginTop: 10 }}>“{TRANSCRIPT}”</div>
-          <div className="src" style={{ marginTop: 8 }}>Live transcript · audio is not saved</div>
+          <div className="mic" style={listening ? undefined : { background: '#777' }}>{MIC}</div>
+          <div className="v" style={{ textAlign: 'left', lineHeight: 1.5, marginTop: 18, minHeight: 48 }}>
+            {text ? `“${text}”` : <span style={{ color: '#999' }}>Say something like “Remind me to call the bank on Friday at 11 AM”</span>}
+          </div>
+          {err && <div className="err" style={{ textAlign: 'left' }}>{err}</div>}
+          <div className="src" style={{ marginTop: 8 }}>
+            Your browser turns speech into text (Chrome uses Google’s speech service). Smart Messenger only receives the text, never audio.
+          </div>
         </div>
         <div className="mf" style={{ justifyContent: 'center' }}>
-          <Btn kind="ghost" lg onClick={() => setModal(null)}>Cancel</Btn>
-          <Btn kind="pri" lg onClick={() => setModal('voice2')}>Done</Btn>
+          <Btn kind="ghost" lg onClick={onCancel}>Cancel</Btn>
+          {!listening && SR && <Btn lg onClick={start}>{MIC} Listen again</Btn>}
+          <Btn kind="pri" lg onClick={finish} disabled={!text}>Done</Btn>
         </div>
       </div>
     </Modal>
-  );
-}
-
-const Field = ({ label, children, style }) => (
-  <div className="field" style={style}><span className="lb">{label}</span>{children}</div>
-);
-
-export function VoiceConfirmModal() {
-  const { setModal, saveTask } = useApp();
-  const [f, setF] = useState({ title: 'Call the bank about loan papers', date: 'Fri, 30 Oct 2026', time: '11:00 AM', repeat: 'Does not repeat', remind: '30 min before' });
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-
-  const save = () => {
-    if (!f.title.trim()) return;
-    saveTask({ ...f, title: f.title.trim(), tag: 'Voice', source: `Added by voice just now: “${TRANSCRIPT}”` });
-    setModal(null);
-  };
-
-  return (
-    <Modal>
-      <div className="mh"><span className="ai">Here’s what I understood</span></div>
-      <div className="mb">
-        <div className="src" style={{ marginBottom: 12 }}>You said: “{TRANSCRIPT}”</div>
-        <Field label="Task · click to edit"><input className="v" value={f.title} onChange={set('title')} /></Field>
-        <div className="grid2">
-          <Field label="Date"><input className="v" value={f.date} onChange={set('date')} /></Field>
-          <Field label="Time"><input className="v" value={f.time} onChange={set('time')} /></Field>
-        </div>
-        <div className="grid2">
-          <Field label="Repeat">
-            <select className="v" value={f.repeat} onChange={set('repeat')}>
-              {['Does not repeat', 'Daily', 'Weekly', 'Monthly'].map((o) => <option key={o}>{o}</option>)}
-            </select>
-          </Field>
-          <Field label="Remind me">
-            <select className="v" value={f.remind} onChange={set('remind')}>
-              {REMIND_OPTS.map((o) => <option key={o}>{o}</option>)}
-            </select>
-          </Field>
-        </div>
-        <div className="card" style={{ background: '#f6f6f6', fontSize: 12.5, lineHeight: 1.5 }}>
-          <b>If something is unclear, the PA asks.</b><br />
-          You: “Remind me to pay rent next week.”<br />
-          PA: “Which day next week? <span className="tag">Mon</span> <span className="tag">Tue</span> <span className="tag">Wed</span> …”
-        </div>
-      </div>
-      <div className="mf">
-        <Btn kind="ghost" lg onClick={() => setModal(null)}>Cancel</Btn>
-        <Btn onClick={() => setModal('voice')}>{MIC} Say again</Btn>
-        <Btn kind="pri" lg onClick={save}>Save task</Btn>
-      </div>
-    </Modal>
-  );
-}
-
-const REPEATS = ['Never', 'Daily', 'Weekly', 'Monthly', 'No date (to-do)'];
-const CONTACTS = ['None', 'Kiran (Brother)', 'Priya Sharma', 'Mom', 'Dad', 'Arjun', 'Ravi Kumar'];
-
-export function NewTaskModal() {
-  const { setModal, saveTask } = useApp();
-  const [f, setF] = useState({
-    title: 'Book flight to Hyderabad', date: 'Sat, 31 Oct 2026', time: '10:00 AM', repeat: 'Never',
-    contact: 'Kiran (Brother)', remind: '30 min before', notes: 'Check Indigo and Air India fares',
-  });
-  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
-  const noDate = f.repeat === 'No date (to-do)';
-
-  const save = () => {
-    if (!f.title.trim()) return;
-    saveTask({
-      title: f.title.trim(), date: f.date, time: f.time, remind: f.remind, repeat: f.repeat, noDate,
-      tag: 'Manual', who: f.contact === 'None' ? '' : f.contact, source: 'Typed by you · just now',
-    });
-    setModal(null);
-  };
-
-  return (
-    <Modal>
-      <div className="mh">New task</div>
-      <div className="mb">
-        <Field label="Task · click to edit"><input className="v" value={f.title} onChange={set('title')} /></Field>
-        {!noDate && (
-          <div className="grid2">
-            <Field label="Date"><input className="v" value={f.date} onChange={set('date')} /></Field>
-            <Field label="Time"><input className="v" value={f.time} onChange={set('time')} /></Field>
-          </div>
-        )}
-        <Field label="Repeat"><ChipSelect options={REPEATS} value={f.repeat} onChange={(v) => setF({ ...f, repeat: v })} /></Field>
-        <div className="grid2">
-          <Field label="Link to contact (optional)">
-            <select className="v" value={f.contact} onChange={set('contact')}>
-              {CONTACTS.map((o) => <option key={o}>{o}</option>)}
-            </select>
-          </Field>
-          <Field label="Remind me">
-            <select className="v" value={f.remind} onChange={set('remind')} disabled={noDate}>
-              {REMIND_OPTS.map((o) => <option key={o}>{o}</option>)}
-            </select>
-          </Field>
-        </div>
-        <Field label="Notes" style={{ margin: 0 }}>
-          <textarea className="v" rows={2} value={f.notes} onChange={set('notes')} />
-        </Field>
-      </div>
-      <div className="mf">
-        <Btn kind="ghost" lg onClick={() => setModal(null)}>Cancel</Btn>
-        <Btn kind="pri" lg onClick={save}>Save task</Btn>
-      </div>
-    </Modal>
-  );
-}
-
-export function ReminderToast() {
-  const { setToast, openChat } = useApp();
-  return (
-    <div className="toast">
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-        <span style={{ fontSize: 20 }}>⏰</span>
-        <div style={{ flex: 1 }}>
-          <b>Reminder · due 4:00 PM</b>
-          <div style={{ fontSize: 12, color: '#bbb' }}>Send Q3 report to Priya · from her chat</div>
-        </div>
-        <span style={{ fontSize: 11, color: '#999' }}>3:30 PM</span>
-      </div>
-      <div className="acts">
-        <Btn kind="pri" onClick={() => setToast(false)}>✓ Done</Btn>
-        <Btn onClick={() => setToast(false)}>Snooze 15 min</Btn>
-        <Btn onClick={() => openChat('priya')}>Open chat</Btn>
-      </div>
-    </div>
   );
 }
